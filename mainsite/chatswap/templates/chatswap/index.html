@@ -27,7 +27,7 @@
                 <h4>Swap</h4>
                 <div id="form">
                     <div class="swapbox">
-                        <div class="swapbox_select token_select">
+                        <div class="swapbox_select token_select" id = "sell_token">
                             SELECT A TOKEN
                         </div>
                         <div class="swapbox_select">
@@ -35,7 +35,7 @@
                         </div>
                     </div>
                     <div class="swapbox">
-                        <div class="swapbox_select token_select">
+                        <div class="swapbox_select token_select" id = "buy_token">
                             SELECT A TOKEN
                         </div>
                          <div class="swapbox_select">
@@ -43,12 +43,30 @@
                         </div>
                     </div>  
                     <div class="gas_estimate_label">Estimated Gas: <span id="gas_estimate"></span></div>
-                    <button class="btn btn-large btn-primary btn-block" id="swap_button">Swap</button>                
+                    <button disabled class="btn btn-large btn-primary btn-block" id="swap_button">Swap</button>                
                 </div>
             </div>
         </div>
     </div>
-    {% load static %}
-    {% comment %} <script src="{% static 'chatswap/index.js' %}" type="text/javascript"></script> {% endcomment %}
+    <div class="modal" tabindex="-1" role="dialog" id = "token_modal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Tokens: </h5>
+              <button type="button" id = "modal_close" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+              {% comment %} <button type="button" id = "modal_close" class="btn btn-secondary" data-dismiss="modal">Close</button> {% endcomment %}
+            </div>
+          </div>
+        </div>
+    </div>
 </body>
+{% load static %}
+    <script src="{% static 'chatswap/index.js' %}" type="text/javascript"></script>
 </html>
