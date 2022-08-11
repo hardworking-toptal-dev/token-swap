@@ -59,13 +59,10 @@
             </div>
             <div class="modal-body">
                 {% for i in tokenNames %}
-                <div class="individ_token_select">
-                {{i}}
+                <div class="individ_token_select"> {% comment %} Will need to put an id parameter that is generated to be unique by the for loop with a template tag/variable {% endcomment %}
+                {{i}} 
                 </div>
-                {% endfor %}
-            </div>
-            <div class="modal-footer">
-            </div>
+                {% endfor %} 
           </div>
         </div>
     </div>
