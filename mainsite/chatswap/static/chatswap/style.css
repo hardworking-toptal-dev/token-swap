@@ -36,3 +36,14 @@
 .gas_estimate_label{
     padding:5px;
 }
+.modal-body{
+    height: 400px;
+    overflow-y: auto;
+}
+.individ_token_select{
+    padding: 5px;
+}
+.individ_token_select:hover{
+    background-color: rgb(185, 185, 185);
+    cursor: pointer;
+}

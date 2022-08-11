@@ -58,10 +58,13 @@
               </button>
             </div>
             <div class="modal-body">
-              <p>Modal body text goes here.</p>
+                {% for i in tokenNames %}
+                <div class="individ_token_select">
+                {{i}}
+                </div>
+                {% endfor %}
             </div>
             <div class="modal-footer">
-              {% comment %} <button type="button" id = "modal_close" class="btn btn-secondary" data-dismiss="modal">Close</button> {% endcomment %}
             </div>
           </div>
         </div>
