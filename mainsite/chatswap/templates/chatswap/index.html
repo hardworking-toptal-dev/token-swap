@@ -31,11 +31,11 @@
                             SELECT A TOKEN
                         </div>
                         <div class="swapbox_select">
-                            <input class="number form-control" placeholder="amount">
+                            <input class="number form-control" placeholder="amount" id = "sell_amount">
                         </div>
                     </div>
                     <div class="swapbox">
-                        <div class="swapbox_select token_select" id = "buy_token">
+                        <div class="swapbox_select token_select" id = "buy_token" id = "buy_amount">
                             SELECT A TOKEN
                         </div>
                          <div class="swapbox_select">
@@ -58,15 +58,73 @@
               </button>
             </div>
             <div class="modal-body">
-                {% for i in tokenNames %}
-                <div class="individ_token_select"> {% comment %} Will need to put an id parameter that is generated to be unique by the for loop with a template tag/variable {% endcomment %}
-                {{i}} 
+                {% for i in tokenData %}
+                <div class="individ_token_select" id = "token_{{i.ticker}}"> {% comment %} Will need to put an id parameter that is generated to be unique by the for loop tag with another template tag/variable {% endcomment %}
+                {{i.ticker}} 
                 </div>
                 {% endfor %} 
           </div>
         </div>
     </div>
 </body>
-{% load static %}
-    <script src="{% static 'chatswap/index.js' %}" type="text/javascript"></script>
 </html>
+{% comment %} {% load static %}
+    <script src="{% static 'chatswap/index.js' %}" type="text/javascript"></script> {% endcomment %}
+
+<script>
+console.log(window.ethereum);
+let account;
+let sellModal = false;
+let buyModal = false;
+let buytoken;
+let sellToken;
+
+function getAccount() {
+  account = ethereum.request({ method: 'eth_requestAccounts'}).then(accounts => {
+    console.log(accounts[0]);
+    return accounts[0];
+  });
+}
+document.getElementById("login_button").onclick = function(){getAccount()};
+
+console.log("{{tokenNames.0}}"); //testing template tags in js
+
+function getModal() {
+  document.getElementById("token_modal").style.display = "block";
+}
+function closeModal() {
+  document.getElementById("token_modal").style.display = "none";
+}
+document.getElementById("buy_token").onclick = function(){
+  getModal()
+  buyModal = true;
+  sellModal = false;
+  console.log("buy modal");
+};
+document.getElementById("sell_token").onclick = function(){
+  getModal()
+  sellModal = true;
+  buyModal = false;
+  console.log("sell modal");
+  };
+document.getElementById("modal_close").onclick = function(){closeModal()};
+
+{% for i in tokenData %}
+document.getElementById("token_{{i.ticker}}").onclick = function() {
+    if (buyModal == true) {
+        document.getElementById("buy_token").innerHTML = "{{i.ticker}}";
+        buyToken = "{{ i.contract }}"
+        console.log(buyToken)
+        closeModal();
+    }
+    if (sellModal == true) {
+        document.getElementById("sell_token").innerHTML = "{{i.ticker}}";
+        sellToken = "{{ i.contract }}";
+        console.log(sellToken);
+        closeModal();
+    }
+}
+{% endfor %}
+
+//document.getElementById("buy_amount").value = 
+</script>
