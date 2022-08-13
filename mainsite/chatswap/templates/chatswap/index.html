@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 {% load static %}
+{% load zrxrequests %}
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -39,7 +40,7 @@
                             SELECT A TOKEN
                         </div>
                          <div class="swapbox_select">
-                            <input class="number form-control" placeholder="amount" id="to_amount">
+                            <input class="number form-control" placeholder="amount" id="buy_amount">
                         </div>
                     </div>  
                     <div class="gas_estimate_label">Estimated Gas: <span id="gas_estimate"></span></div>
@@ -78,6 +79,7 @@ let sellModal = false;
 let buyModal = false;
 let buytoken;
 let sellToken;
+let priceData;
 
 function getAccount() {
   account = ethereum.request({ method: 'eth_requestAccounts'}).then(accounts => {
@@ -126,5 +128,9 @@ document.getElementById("token_{{i.ticker}}").onclick = function() {
 }
 {% endfor %}
 
+console.log("{{'ETH,0x3845badAde8e6dFF049820680d1F14bD3903a5d0' | pullprice }}"); // testing for using custom django template filters to call python functions
+//Have created a view that calls upon the pullPrice function zrxrequests.py, taking in buyTokenAddress and sellTokenAddress as parameters and returns a jsonresponse
+//and then mapped a URL path to the view which takes in the view's parameters as directories in the path. Now I have called upon
+// this URL and am trying to pull the raw json data from the promise object that the browser recieves.
 //document.getElementById("buy_amount").value = 
 </script>

@@ -2,8 +2,9 @@ from calendar import c
 from http.client import HTTPResponse
 from unicodedata import decimal
 from django.shortcuts import render
+from django.http import JsonResponse
 import chatswap.swapscripts.tokenlist as tokenlist
-import chatswap.swapscripts.zrxrequests as zrxrequests
+# import chatswap.swapscripts.zrxrequests as zrxrequests
 
 def index(request):
     tokensRaw = tokenlist.getTokenData("https://tokens.coingecko.com/uniswap/all.json")
@@ -15,3 +16,6 @@ def index(request):
         tokens.append(tokenlist.token(ticker, decimals, contract))
     context = {"tokenData": tokens}
     return render(request, "chatswap/index.html", context)
+
+# def pullPrice(request, sellTokenAddress, buyTokenAddress):
+#     return JsonResponse({"price": zrxrequests.pullPrice(sellTokenAddress, buyTokenAddress)})
