@@ -32,15 +32,15 @@
                             SELECT A TOKEN
                         </div>
                         <div class="swapbox_select">
-                            <input class="number form-control" placeholder="amount" id = "sell_amount">
+                            <input class="number form-control" placeholder="amount" id = "sell_amount" onchange = "getPrice('sell')">
                         </div>
                     </div>
                     <div class="swapbox">
-                        <div class="swapbox_select token_select" id = "buy_token" id = "buy_amount">
+                        <div class="swapbox_select token_select" id = "buy_token">
                             SELECT A TOKEN
                         </div>
                          <div class="swapbox_select">
-                            <input class="number form-control" placeholder="amount" id="buy_amount">
+                            <input class="number form-control" placeholder="amount" id="buy_amount" onchange = "getPrice('buy')">
                         </div>
                     </div>  
                     <div class="gas_estimate_label">Estimated Gas: <span id="gas_estimate"></span></div>
@@ -75,11 +75,12 @@
 <script>
 console.log(window.ethereum);
 let account;
-let sellModal = false;
-let buyModal = false;
+let sellModalOpen = false;
+let buyModalOpen = false;
 let buytoken;
 let sellToken;
 let priceData;
+let buyAmount = false;
 
 function getAccount() {
   account = ethereum.request({ method: 'eth_requestAccounts'}).then(accounts => {
@@ -99,36 +100,63 @@ function closeModal() {
 }
 document.getElementById("buy_token").onclick = function(){
   getModal()
-  buyModal = true;
-  sellModal = false;
+  buyModalOpen = true;
+  sellModalOpen = false;
   console.log("buy modal");
 };
 document.getElementById("sell_token").onclick = function(){
   getModal()
-  sellModal = true;
-  buyModal = false;
+  sellModalOpen = true;
+  buyModalOpen = false;
   console.log("sell modal");
   };
 document.getElementById("modal_close").onclick = function(){closeModal()};
 
 {% for i in tokenData %}
 document.getElementById("token_{{i.ticker}}").onclick = function() {
-    if (buyModal == true) {
+    if (buyModalOpen == true) {
         document.getElementById("buy_token").innerHTML = "{{i.ticker}}";
-        buyToken = "{{ i.contract }}"
-        console.log(buyToken)
+        buyToken = "{{ i.contract }}";
+        console.log(buyToken);
         closeModal();
+        //getPrice();
     }
-    if (sellModal == true) {
+    if (sellModalOpen == true) {
         document.getElementById("sell_token").innerHTML = "{{i.ticker}}";
         sellToken = "{{ i.contract }}";
         console.log(sellToken);
         closeModal();
+        //getPrice();
     }
 }
 {% endfor %}
-
-console.log("{{'ETH,0x3845badAde8e6dFF049820680d1F14bD3903a5d0' | pullprice }}"); // testing for using custom django template filters to call python functions
+function getPrice(buyOrSell) {
+    if (buyToken != null && sellToken != null) {
+        const Http = new XMLHttpRequest();
+        const url= "https://api.0x.org/swap/v1/price/";
+        const params = "buyToken=" + buyToken + "&sellToken=" + sellToken + "&" + buyOrSell + "Amount=100000000000000000000";
+        Http.open("GET", url + "?" + params);
+        Http.send(params);
+        
+        Http.onreadystatechange = (e) => {
+            //console.log(Http.responseText["price"]);
+            responseDict = JSON.parse(Http.responseText);
+            if (buyOrSell == "sell") {
+                amount = document.getElementById("sell_amount").value;
+                document.getElementById("buy_amount").value = null;
+                document.getElementById("buy_amount").placeholder = responseDict["price"] * amount;
+                document.getElementById("sell_amount").placeholder = "";
+            }
+            if (buyOrSell == "buy") {
+                amount = document.getElementById("buy_amount").value;
+                document.getElementById("sell_amount").value = null;
+                document.getElementById("sell_amount").placeholder = responseDict["price"] * amount;
+                document.getElementById("buy_amount").placeholder = "";
+            }
+        }
+    }
+}
+ // testing for using custom django template filters to call python functions
 //Have created a view that calls upon the pullPrice function zrxrequests.py, taking in buyTokenAddress and sellTokenAddress as parameters and returns a jsonresponse
 //and then mapped a URL path to the view which takes in the view's parameters as directories in the path. Now I have called upon
 // this URL and am trying to pull the raw json data from the promise object that the browser recieves.

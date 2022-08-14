@@ -13,6 +13,6 @@ def pullprice(value):
     response = quote.json()
     price = response["price"]
 
-    return price
+    return response
 
 # print(pullprice("ETH,0x3845badAde8e6dFF049820680d1F14bD3903a5d0"))
