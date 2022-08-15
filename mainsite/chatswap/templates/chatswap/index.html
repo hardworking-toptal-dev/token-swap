@@ -81,6 +81,8 @@ let buytoken;
 let sellToken;
 let priceData;
 let buyAmount = false;
+let buyDecimals;
+let sellDecimals;
 
 function getAccount() {
   account = ethereum.request({ method: 'eth_requestAccounts'}).then(accounts => {
@@ -117,6 +119,8 @@ document.getElementById("token_{{i.ticker}}").onclick = function() {
     if (buyModalOpen == true) {
         document.getElementById("buy_token").innerHTML = "{{i.ticker}}";
         buyToken = "{{ i.contract }}";
+        buyDecimals = "{{ i.decimals }}";
+        console.log(buyDecimals);
         console.log(buyToken);
         closeModal();
         //getPrice();
@@ -124,6 +128,8 @@ document.getElementById("token_{{i.ticker}}").onclick = function() {
     if (sellModalOpen == true) {
         document.getElementById("sell_token").innerHTML = "{{i.ticker}}";
         sellToken = "{{ i.contract }}";
+        sellDecimals = "{{ i.decimals }}";
+        console.log(sellDecimals);
         console.log(sellToken);
         closeModal();
         //getPrice();
@@ -134,26 +140,31 @@ function getPrice(buyOrSell) {
     if (buyToken != null && sellToken != null) {
         const Http = new XMLHttpRequest();
         const url= "https://api.0x.org/swap/v1/price/";
-        const params = "buyToken=" + buyToken + "&sellToken=" + sellToken + "&" + buyOrSell + "Amount=100000000000000000000";
-        Http.open("GET", url + "?" + params);
-        Http.send(params);
+        const params = "buyToken=" + buyToken + "&sellToken=" + sellToken + "&" + buyOrSell;
         
-        Http.onreadystatechange = (e) => {
             //console.log(Http.responseText["price"]);
-            responseDict = JSON.parse(Http.responseText);
             if (buyOrSell == "sell") {
-                amount = document.getElementById("sell_amount").value;
-                document.getElementById("buy_amount").value = null;
-                document.getElementById("buy_amount").placeholder = responseDict["price"] * amount;
-                document.getElementById("sell_amount").placeholder = "";
+                Http.open("GET", url + "?" + params + "Amount=" + 10 ** sellDecimals);
+                Http.send();
+                Http.onreadystatechange = (e) => {
+                    let responseDict = JSON.parse(Http.responseText);
+                    amount = document.getElementById("sell_amount").value;
+                    document.getElementById("buy_amount").value = null;
+                    document.getElementById("buy_amount").placeholder = responseDict["price"] * amount;
+                    document.getElementById("sell_amount").placeholder = "";
+                }
             }
             if (buyOrSell == "buy") {
-                amount = document.getElementById("buy_amount").value;
-                document.getElementById("sell_amount").value = null;
-                document.getElementById("sell_amount").placeholder = responseDict["price"] * amount;
-                document.getElementById("buy_amount").placeholder = "";
+                Http.open("GET", url + "?" + params + "Amount=" + 10 ** buyDecimals);
+                Http.send();
+                Http.onreadystatechange = (e) => {
+                    let responseDict = JSON.parse(Http.responseText);
+                    amount = document.getElementById("buy_amount").value;
+                    document.getElementById("sell_amount").value = null;
+                    document.getElementById("sell_amount").placeholder = responseDict["price"] * amount;
+                    document.getElementById("buy_amount").placeholder = "";
+                }
             }
-        }
     }
 }
  // testing for using custom django template filters to call python functions
