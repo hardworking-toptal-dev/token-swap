@@ -44,7 +44,7 @@
                         </div>
                     </div>  
                     <div class="gas_estimate_label">Estimated Gas: <span id="gas_estimate"></span></div>
-                    <button disabled class="btn btn-large btn-primary btn-block" id="swap_button">Swap</button>                
+                    <button class="btn btn-large btn-primary btn-block" id="swap_button">Swap</button>                
                 </div>
             </div>
         </div>
@@ -74,7 +74,7 @@
 
 <script>
 console.log(window.ethereum);
-let account;
+let accountPromise;
 let sellModalOpen = false;
 let buyModalOpen = false;
 let buytoken;
@@ -85,12 +85,14 @@ let buyDecimals;
 let sellDecimals;
 
 function getAccount() {
-  account = ethereum.request({ method: 'eth_requestAccounts'}).then(accounts => {
-    console.log(accounts[0]);
-    return accounts[0];
-  });
+    return ethereum.request({ method: 'eth_requestAccounts'});
 }
-document.getElementById("login_button").onclick = function(){getAccount()};
+
+document.getElementById("login_button").onclick = function(){
+    accountPromise = getAccount().then(accounts => {
+        return accounts[0];
+    })
+};
 
 console.log("{{tokenNames.0}}"); //testing template tags in js
 
@@ -144,32 +146,74 @@ function getPrice(buyOrSell) {
         
             //console.log(Http.responseText["price"]);
             if (buyOrSell == "sell") {
-                Http.open("GET", url + "?" + params + "Amount=" + 10 ** sellDecimals);
+                Http.open("GET", url + "?" + params + "Amount=" + 10 ** (sellDecimals - 1));
                 Http.send();
                 Http.onreadystatechange = (e) => {
                     let responseDict = JSON.parse(Http.responseText);
                     amount = document.getElementById("sell_amount").value;
-                    document.getElementById("buy_amount").value = null;
-                    document.getElementById("buy_amount").placeholder = responseDict["price"] * amount;
+                    document.getElementById("buy_amount").placeholder = null;
+                    document.getElementById("buy_amount").value = responseDict["price"] * amount;
                     document.getElementById("sell_amount").placeholder = "";
                 }
             }
             if (buyOrSell == "buy") {
-                Http.open("GET", url + "?" + params + "Amount=" + 10 ** buyDecimals);
+                Http.open("GET", url + "?" + params + "Amount=" + 10 ** (buyDecimals - 1));
                 Http.send();
                 Http.onreadystatechange = (e) => {
                     let responseDict = JSON.parse(Http.responseText);
                     amount = document.getElementById("buy_amount").value;
-                    document.getElementById("sell_amount").value = null;
-                    document.getElementById("sell_amount").placeholder = responseDict["price"] * amount;
+                    document.getElementById("sell_amount").placeholder = null;
+                    document.getElementById("sell_amount").value = responseDict["price"] * amount;
                     document.getElementById("buy_amount").placeholder = "";
                 }
             }
     }
 }
- // testing for using custom django template filters to call python functions
-//Have created a view that calls upon the pullPrice function zrxrequests.py, taking in buyTokenAddress and sellTokenAddress as parameters and returns a jsonresponse
-//and then mapped a URL path to the view which takes in the view's parameters as directories in the path. Now I have called upon
-// this URL and am trying to pull the raw json data from the promise object that the browser recieves.
-//document.getElementById("buy_amount").value = 
+async function getQuote() {
+    if (buyToken != null && sellToken != null) {
+        const account = await accountPromise;
+        let responseDict;
+        let amount = document.getElementById("sell_amount").value;
+        console.log(amount);
+        const Http = new XMLHttpRequest();
+        const url= "https://api.0x.org/swap/v1/quote/";
+        const params = "buyToken=" + buyToken + "&sellToken=" + sellToken + "&sellAmount=" + ((10 ** (sellDecimals)) * amount) + "&takerAddress=" + account;
+        console.log(sellDecimals);
+        Http.open("GET", url + "?" + params);
+        Http.send();
+        return Http;
+    }
+}
+
+function countDigits(number) {
+    let s = number.toString();
+    let count = 0;
+    for (i = 0; i < s.length; i++) {
+        if (s.charAt(i) != '.') {
+            count++;
+        }
+        else {
+            break;
+        }
+    }
+    return count;
+}
+
+document.getElementById("swap_button").onclick = function() { //Test for getQuote(), although the same functionality with this button will be implemented
+    quoteTest = getQuote(); //test for returning json response.
+    quoteTest.onreadystatechange = (e) => {
+        responseDict = JSON.parse(quoteTest.responseText);
+        console.log(responseDict);
+    }
+}
+    //Need to figure out how to return a value for how many digits the "sell amount" value is when inputed and then
+    //subtract that amount from the sellDecimals variable when passing it to the swap quote URL. I believe this has something
+    // to do with getPrice caculations. When putting in different amounts of tokens, it seems the amount can get to a decimal way more precise
+    // than the tokens actual decimal precision. Because this value is calculated using basic multiplacation and then passed from the
+    // getPrice method to the input blocks and then the input block's value is then passed to the getQuote function, the decimal precision is not
+    // taken into consideration and results in a number with far more digits. I should try to reimplement the getPrice function to fill in the
+    // token amount values directly from the 0x price API endpoint by inputting the amount typed in a input block directly into the get request.
+    //Also, for tokens with over 21 decimals, javascript is going to put the amount into scientific notation.
+    //So I need to find a way to ensure those sell amounts are in decimal format only.
+
 </script>
