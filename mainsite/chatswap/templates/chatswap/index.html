@@ -176,7 +176,7 @@ async function getQuote() {
         console.log(account); //testing getAccount()
         let responseDict;
         let amount;
-        if (document.getElementById("sell_amount").value >= 1) {
+        if (document.getElementById("sell_amount").value >= 1 && document.getElementById("sell_amount").value % 1 == 0) {
             amount = document.getElementById("sell_amount").value * (10 ** sellDecimals) / 10;
         }
         else {
