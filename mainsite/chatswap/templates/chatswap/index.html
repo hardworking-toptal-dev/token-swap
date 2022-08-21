@@ -146,7 +146,7 @@ function getPrice(buyOrSell) {
         
             //console.log(Http.responseText["price"]);
             if (buyOrSell == "sell") {
-                Http.open("GET", url + "?" + params + "Amount=" + 10 ** (sellDecimals - 1));
+                Http.open("GET", url + "?" + params + "Amount=" + 10 ** (sellDecimals));
                 Http.send();
                 Http.onreadystatechange = (e) => {
                     let responseDict = JSON.parse(Http.responseText);
@@ -157,12 +157,13 @@ function getPrice(buyOrSell) {
                 }
             }
             if (buyOrSell == "buy") {
-                Http.open("GET", url + "?" + params + "Amount=" + 10 ** (buyDecimals - 1));
+                Http.open("GET", url + "?" + params + "Amount=" + 10 ** (buyDecimals));
                 Http.send();
                 Http.onreadystatechange = (e) => {
                     let responseDict = JSON.parse(Http.responseText);
                     amount = document.getElementById("buy_amount").value;
                     document.getElementById("sell_amount").placeholder = null;
+                    console.log(document.getElementById("sell_amount").value);
                     document.getElementById("sell_amount").value = responseDict["price"] * amount;
                     document.getElementById("buy_amount").placeholder = "";
                 }
@@ -172,12 +173,19 @@ function getPrice(buyOrSell) {
 async function getQuote() {
     if (buyToken != null && sellToken != null) {
         const account = await accountPromise;
+        console.log(account); //testing getAccount()
         let responseDict;
-        let amount = document.getElementById("sell_amount").value;
+        let amount;
+        if (document.getElementById("sell_amount").value >= 1) {
+            amount = document.getElementById("sell_amount").value * (10 ** sellDecimals) / 10;
+        }
+        else {
+            amount = document.getElementById("sell_amount").value * (10 ** sellDecimals);
+        }
         console.log(amount);
         const Http = new XMLHttpRequest();
         const url= "https://api.0x.org/swap/v1/quote/";
-        const params = "buyToken=" + buyToken + "&sellToken=" + sellToken + "&sellAmount=" + ((10 ** (sellDecimals)) * amount) + "&takerAddress=" + account;
+        const params = "buyToken=" + buyToken + "&sellToken=" + sellToken + "&sellAmount=" +  amount + "&takerAddress=" + account;
         console.log(sellDecimals);
         Http.open("GET", url + "?" + params);
         Http.send();
@@ -197,9 +205,12 @@ function countDigits(number) {
         }
     }
     return count;
-}
+} 
 
 document.getElementById("swap_button").onclick = function() { //Test for getQuote(), although the same functionality with this button will be implemented
+    accountPromise = getAccount().then(accounts => {
+        return accounts[0];
+    })
     quoteTest = getQuote(); //test for returning json response.
     quoteTest.onreadystatechange = (e) => {
         responseDict = JSON.parse(quoteTest.responseText);
