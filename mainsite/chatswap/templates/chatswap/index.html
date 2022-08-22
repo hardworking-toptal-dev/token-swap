@@ -146,25 +146,25 @@ function getPrice(buyOrSell) {
         
             //console.log(Http.responseText["price"]);
             if (buyOrSell == "sell") {
-                Http.open("GET", url + "?" + params + "Amount=" + 10 ** (sellDecimals));
+                amount = document.getElementById("sell_amount").value;
+                Http.open("GET", url + "?" + params + "Amount=" + amount * (10 ** (sellDecimals)));
                 Http.send();
                 Http.onreadystatechange = (e) => {
                     let responseDict = JSON.parse(Http.responseText);
-                    amount = document.getElementById("sell_amount").value;
                     document.getElementById("buy_amount").placeholder = null;
-                    document.getElementById("buy_amount").value = responseDict["price"] * amount;
+                    document.getElementById("buy_amount").value = (responseDict["price"] * amount).toFixed(buyDecimals - 1);
                     document.getElementById("sell_amount").placeholder = "";
                 }
             }
             if (buyOrSell == "buy") {
-                Http.open("GET", url + "?" + params + "Amount=" + 10 ** (buyDecimals));
+                amount = document.getElementById("buy_amount").value;
+                Http.open("GET", url + "?" + params + "Amount=" + amount * (10 ** (buyDecimals)));
                 Http.send();
                 Http.onreadystatechange = (e) => {
                     let responseDict = JSON.parse(Http.responseText);
-                    amount = document.getElementById("buy_amount").value;
                     document.getElementById("sell_amount").placeholder = null;
                     console.log(document.getElementById("sell_amount").value);
-                    document.getElementById("sell_amount").value = responseDict["price"] * amount;
+                    document.getElementById("sell_amount").value = (responseDict["price"] * amount).toFixed(sellDecimals - 1);
                     document.getElementById("buy_amount").placeholder = "";
                 }
             }
@@ -176,12 +176,9 @@ async function getQuote() {
         console.log(account); //testing getAccount()
         let responseDict;
         let amount;
-        if (document.getElementById("sell_amount").value >= 1 && document.getElementById("sell_amount").value % 1 == 0) {
-            amount = document.getElementById("sell_amount").value * (10 ** sellDecimals) / 10;
-        }
-        else {
-            amount = document.getElementById("sell_amount").value * (10 ** sellDecimals);
-        }
+        //console.log(document.getElementById("sell_amount").value)
+        amount = document.getElementById("sell_amount").value * (10 ** (sellDecimals - 1));
+        amount = Math.round(amount);
         console.log(amount);
         const Http = new XMLHttpRequest();
         const url= "https://api.0x.org/swap/v1/quote/";
