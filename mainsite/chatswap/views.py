@@ -14,6 +14,7 @@ def index(request):
         contract = i["address"]
         decimals = i["decimals"]
         tokens.append(tokenlist.token(ticker, decimals, contract))
+    tokens.append(tokenlist.token("ETH", 18, "ETH"))
     context = {"tokenData": tokens}
     return render(request, "chatswap/index.html", context)
 

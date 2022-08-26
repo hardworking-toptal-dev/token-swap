@@ -71,7 +71,7 @@
 </html>
 {% comment %} {% load static %}
     <script src="{% static 'chatswap/index.js' %}" type="text/javascript"></script> {% endcomment %}
-    <script src='https://cdn.jsdelivr.net/npm/bignumber.js@9.1.0/bignumber.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/bignumber.js@9.1.0/bignumber.min.js'></script>
 <script>
 console.log(window.ethereum);
 let accountPromise;
@@ -142,7 +142,10 @@ document.getElementById("token_{{i.ticker}}").onclick = function() {
 function getPrice(buyOrSell) {
     if (buyToken != null && sellToken != null) {
         const Http = new XMLHttpRequest();
-        const url= "https://api.0x.org/swap/v1/price/";
+        let url= "https://api.0x.org/swap/v1/price/";
+        if (debug) {
+            url = "https://goerli.api.0x.org/swap/v1/price/"
+        }
         const params = "buyToken=" + buyToken + "&sellToken=" + sellToken + "&" + buyOrSell;
         
             //console.log(Http.responseText["price"]);
@@ -153,7 +156,7 @@ function getPrice(buyOrSell) {
                 Http.onreadystatechange = (e) => {
                     let responseDict = JSON.parse(Http.responseText);
                     document.getElementById("buy_amount").placeholder = null;
-                    document.getElementById("buy_amount").value = (responseDict["price"] * amount).toFixed(buyDecimals - 1);
+                    document.getElementById("buy_amount").value = (responseDict["price"] * amount).toFixed(buyDecimals);
                     document.getElementById("sell_amount").placeholder = "";
                 }
             }
@@ -165,20 +168,21 @@ function getPrice(buyOrSell) {
                     let responseDict = JSON.parse(Http.responseText);
                     document.getElementById("sell_amount").placeholder = null;
                     console.log(document.getElementById("sell_amount").value);
-                    document.getElementById("sell_amount").value = (responseDict["price"] * amount).toFixed(sellDecimals - 1);
+                    document.getElementById("sell_amount").value = (responseDict["price"] * amount).toFixed(sellDecimals);
                     document.getElementById("buy_amount").placeholder = "";
                 }
             }
     }
 }
-async function getQuote() {
+async function getQuote(approval) {
     if (buyToken != null && sellToken != null) {
         const account = await accountPromise;
         console.log(account); //testing getAccount()
         let responseDict;
         let amount;
+        let params;
         //console.log(document.getElementById("sell_amount").value)
-        amount = document.getElementById("sell_amount").value * (10 ** (sellDecimals - 1));
+        amount = document.getElementById("sell_amount").value * (10 ** (sellDecimals));
         amount = Math.round(amount);
         console.log(amount);
         const Http = new XMLHttpRequest();
@@ -186,7 +190,12 @@ async function getQuote() {
         if (debug) {
             url= "https://goerli.api.0x.org/swap/v1/quote/";
         }
-        const params = "buyToken=" + buyToken + "&sellToken=" + sellToken + "&sellAmount=" +  amount// + "&takerAddress=" + account; // <-- Commented out to allow metamask to prompt user for a transaction (AKA avoiding error code 105 issue for testing beyond that issue).
+        if (approval) {
+            params = "buyToken=" + buyToken + "&sellToken=" + sellToken + "&sellAmount=" +  amount + "&takerAddress=" + account + "&skipValidation=true"; 
+        }
+        else {
+            params = "buyToken=" + buyToken + "&sellToken=" + sellToken + "&sellAmount=" +  amount + "&takerAddress=" + account // <-- Commented out to allow metamask to prompt user for a transaction (AKA avoiding error code 105 issue for testing beyond that issue).
+        }
         console.log(sellDecimals);
         Http.open("GET", url + "?" + params);
         Http.send();
@@ -216,22 +225,42 @@ document.getElementById("swap_button").onclick = function() {
 }
 
 async function swap() {
-    const web3 = new Web3(Web3.givenProvider)
+    const web3access = new Web3(window.ethereum)
     const abi = [{ "inputs": [ { "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "symbol", "type": "string" }, { "internalType": "uint256", "name": "max_supply", "type": "uint256" } ], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": true, "internalType": "address", "name": "spender", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" } ], "name": "Approval", "type": "event" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "from", "type": "address" }, { "indexed": true, "internalType": "address", "name": "to", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" } ], "name": "Transfer", "type": "event" }, { "inputs": [ { "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" } ], "name": "allowance", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" } ], "name": "approve", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "account", "type": "address" } ], "name": "balanceOf", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "uint256", "name": "amount", "type": "uint256" } ], "name": "burn", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "account", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" } ], "name": "burnFrom", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "decimals", "outputs": [ { "internalType": "uint8", "name": "", "type": "uint8" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "subtractedValue", "type": "uint256" } ], "name": "decreaseAllowance", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "addedValue", "type": "uint256" } ], "name": "increaseAllowance", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "name", "outputs": [ { "internalType": "string", "name": "", "type": "string" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "symbol", "outputs": [ { "internalType": "string", "name": "", "type": "string" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "totalSupply", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" } ], "name": "transfer", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "sender", "type": "address" }, { "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" } ], "name": "transferFrom", "outputs": [ { "internalType": "bool", "name": "", "type": "bool" } ], "stateMutability": "nonpayable", "type": "function" }];
-    const maxApproval = 1000000000000000;//new BigNumber(2).pow(256).minus(1);
+    const maxApproval = "10000000000000000000000000000000000" // approval amount that may only be used for debugging, need to do more research to see if there is a security issue for users by allowing an unlimited amount token approval 
     console.log(maxApproval);
-    const contract = new web3.eth.Contract(abi, sellToken);
+    const contract = new web3access.eth.Contract(abi, sellToken);
     const account = await accountPromise;
-    quote = await getQuote();
-    console.log(quote);
-    quote.onreadystatechange = (e) => {
-        let responseDict = JSON.parse(quote.responseText)
-        contract.methods.approve(responseDict["allowanceTarget"], maxApproval).send({from: account}).then(tx => {
+    allowanceQuote = await getQuote(true);
+    swapQuote = await getQuote(false);
+    allowanceQuote.onreadystatechange = (e) => { //Maybe should check if user has already set approval for sellToken passed in above depending on whether or not I decide to have users set unlimited token allowances per token approval.
+        let responseDict = JSON.parse(allowanceQuote.responseText)
+        contract.methods.approve(responseDict["allowanceTarget"], maxApproval).send({from: account}).then(tx => { //Token approval method for 0x api contract address
         console.log(tx);
         });
     };
+    swapQuote.onreadystatechange = (e) => { //Need this to run AFTER a response from the above approve method returns a successful transaction.
+        let responseDict = JSON.parse(swapQuote.responseText)
+        console.log(web3access.eth.sendTransaction(responseDict));
+    }
+}
+
+function ensureNotation(number) {
+    let s = "" // Will implement later, basically is a function that will ensure numbers are not represented in scientific notation.
 }
     //Also, for tokens with over 21 decimals, javascript is going to put the amount into scientific notation.
     //So I need to find a way to ensure those sell amounts are in decimal format only.
+
+
+    //Have figured out how to set token approvals/allowances in the swap function, which fixes the issues of error code 105.
+    //Basically just have to set the token approval PRIOR to calling the quote. I can do this by requesting the quote with 
+    //the skipValidation parameter set to true in order to pull the allowanceTarget to then be used in the .approve() method 
+    //for the contract object at which point I can then call the sendTransaction method
+    //with the web3 object instantiated with the window.ethereum object injected by metamask. 
+    //
+    //Issues to solve: 1. Every transaction is duplicated when called to metamask. 2. Need to figure out how to implement swapping
+    //from pure ethereum to a token. This means that I have to instantiate a the contract object with ethereum being the current
+    //"sellToken" paramter which is just the contract address for the sellToken. The ethereum coin obviously doesn't have a contract
+    //address, so there must be a different way to create that object.
 
 </script>
