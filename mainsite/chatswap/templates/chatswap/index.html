@@ -60,7 +60,7 @@
             </div>
             <div class="modal-body">
                 {% for i in tokenData %}
-                <div class="individ_token_select" id = "token_{{i.ticker}}"> {% comment %} Will need to put an id parameter that is generated to be unique by the for loop tag with another template tag/variable {% endcomment %}
+                <div class="individ_token_select" id = "token_{{i.ticker}}"> 
                 {{i.ticker}} 
                 </div>
                 {% endfor %} 
