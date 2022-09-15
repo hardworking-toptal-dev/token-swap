@@ -1,49 +1,77 @@
-#window{
-    margin-top: 50px;
-    background-color: #000;
-    color: #fff;
-    padding: 15px;
-    border-radius: 20px;
-    box-shadow: 0 0 5px black;
+* {
+    background-color: rgb(20, 20, 20);
+    color:rgb(255, 255, 255);
+    border: white;
 }
-.swapbox_select {
-    width: 50%;
-    float: left;
+.mainbox {
+    border: solid 5px;
+    margin: auto;
+    margin-top: 5%;
+    width: 400px;
+    height: 350px;
+    padding-top: 0px;
+    position: relative;
 }
-.swapbox{
-    overflow: auto;
-    margin: 20px 0;
-    padding: 20px;
-    background-color: #2f2f2f;
-    border-radius: 20px;
-    border: 1px solid #565656;
+.swapbox {
+    border-bottom: solid 5px;
+    width: 100%;
+    height: 30%;
+    padding: 5%;
+    margin: auto;
 }
-.token_select{
-    padding:5px 0;
+.generalButton {
+    /* background-color: white; */
+    border: solid 1px;
 }
-.token_select:hover{
-    background-color: #464646;
-    cursor: pointer;
-    
+.generalButton:hover {
+    background-color: gray;
 }
-.token_row{
-    padding: 5px 10px;
+.generalButton:active {
+    background-color: lightgray;
 }
-.token_row:hover{
-    background-color: #e4e4e4;
-    cursor: pointer;
+.selectToken {
+    margin: auto;
+    margin-top: 4%;
+    margin-left: 2%;
+    width: 40%;
 }
-.gas_estimate_label{
-    padding:5px;
+.amountInput {
+    margin-left: 5px;
+    padding-left: 10px;
+    border: solid 1px;
 }
-.modal-body{
+.gasText {
+    padding-top: 10px;
+}
+.swapButton {
+    margin: auto;
+    margin-top: 17%;
+    margin-left: 24%;
+    width: 200px;
+    position: absolute;
+}
+.modalBody{
     height: 400px;
     overflow-y: auto;
 }
-.individ_token_select{
-    padding: 5px;
+.tokenRow{
+    margin-top: 10px;
+    margin-left: 10px;
+    font-size: large;
 }
-.individ_token_select:hover{
-    background-color: rgb(185, 185, 185);
-    cursor: pointer;
+.tokenRow:hover{
+    background-color: gray;
+}
+.tokenRow:active {
+    background-color: lightgray;
+}
+.loginButton {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+.title {
+    position: absolute;
+    margin-left: 43.5%;
+    margin-top: -60px;
 }

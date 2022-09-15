@@ -4,6 +4,5 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name = "index"),
-    path('new/', views.newIndex, name = "newIndex")
     # path('pullPrice/<str:sellTokenAddress>/<str:buyTokenAddress>', views.pullPrice, name = 'pullPrice')
 ]
