@@ -4,7 +4,6 @@ from unicodedata import decimal
 from django.shortcuts import render
 from django.http import JsonResponse
 import chatswap.swapscripts.tokenlist as tokenlist
-# import chatswap.swapscripts.zrxrequests as zrxrequests
 
 # Main view for the Chatswap web application.
 def index(request):

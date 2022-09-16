@@ -1,1 +1,3 @@
 .DS_Store
+mainsite/mainsite/secretkey.py
+mainsite/mainsite/__pycache__/secretkey.cpython-39.pyc
