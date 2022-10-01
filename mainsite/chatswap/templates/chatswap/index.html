@@ -140,7 +140,7 @@
                 //console.log(Http.responseText["price"]);
                 if (buyOrSell == "sell") {
                     amount = document.getElementById("sell_amount").value;
-                    Http.open("GET", url + "?" + params + "Amount=" + amount * (10 ** (sellDecimals))); //Gets the full amount based on the decimal of the token and sets it to the Amount parameter.
+                    Http.open("GET", url + "?" + params + "Amount=" + ensureNotation((amount * (10 ** sellDecimals)))); //Gets the full amount based on the decimal of the token and sets it to the Amount parameter.
                     // Ex. 2 tokens with a decimal of 18 would be requested to the 0x API as 2000000000000000000
                     Http.send();
                     Http.onreadystatechange = (e) => {
@@ -152,7 +152,7 @@
                 }
                 if (buyOrSell == "buy") {
                     amount = document.getElementById("buy_amount").value;
-                    Http.open("GET", url + "?" + params + "Amount=" + amount * (10 ** (buyDecimals)));
+                    Http.open("GET", url + "?" + params + "Amount=" + ensureNotation((amount * (10 ** buyDecimals))));
                     Http.send();
                     Http.onreadystatechange = (e) => {
                         let responseDict = JSON.parse(Http.responseText);
@@ -175,18 +175,17 @@
             let params;
             //console.log(document.getElementById("sell_amount").value)
             amount = document.getElementById("sell_amount").value * (10 ** (sellDecimals)); //Retrieves amount user is wishing to sell.
-            amount = Math.round(amount); //Ensures above calculation results in no hard decimals.
-            console.log(amount);
+            amount = ensureNotation(Math.round(amount)); //Ensures above calculation results in no hard decimals.
             const Http = new XMLHttpRequest();
             let url= "https://api.0x.org/swap/v1/quote/";
             if (debug) { //Used to send quotes to the goerli testnet for debugging
                 url= "https://goerli.api.0x.org/swap/v1/quote/";
             }
             if (approval) { //Skips validation based on if quote is to be used to set token allowances/approval.
-                params = "buyToken=" + buyToken + "&sellToken=" + sellToken + "&sellAmount=" +  amount + "&takerAddress=" + account + "&skipValidation=true"; 
+                params = "buyToken=" + buyToken + "&sellToken=" + sellToken + "&sellAmount=" + amount + "&takerAddress=" + account + "&skipValidation=true"; 
             }
             else {
-                params = "buyToken=" + buyToken + "&sellToken=" + sellToken + "&sellAmount=" +  amount + "&takerAddress=" + account // <-- Commented out to allow metamask to prompt user for a transaction (AKA avoiding error code 105 issue for testing beyond that issue).
+                params = "buyToken=" + buyToken + "&sellToken=" + sellToken + "&sellAmount=" + amount + "&takerAddress=" + account
             }
             console.log(sellDecimals);
             Http.open("GET", url + "?" + params);
@@ -229,8 +228,8 @@
         console.log(maxApproval);
         const contract = new web3access.eth.Contract(abi, sellToken);
         const account = await accountPromise;
-        allowanceQuote = await getQuote(true);
-        swapQuote = await getQuote(false);
+        let allowanceQuote = await getQuote(true);
+        let swapQuote = await getQuote(false);
         allowanceQuote.onreadystatechange = (e) => { //Maybe should check if user has already set approval for sellToken passed in above depending on whether or not I decide to have users set unlimited token allowances per token approval.
             let responseDict = JSON.parse(allowanceQuote.responseText)
             contract.methods.approve(responseDict["allowanceTarget"], maxApproval).send({from: account}).then(tx => { //Token approval method for 0x api contract address
@@ -243,9 +242,56 @@
         }
     }
     
+    //Ensures that any number passed into it is returns as a string in standard notation, not scientific.
     function ensureNotation(number) {
-        let s = "" // Will implement later, basically is a function that will ensure numbers are not represented in scientific notation.
+        let s = "";
+        const numberString = number.toString();
+        let scientificNotationFlag = false;
+        let digits;
+
+        for (let i = 0; i <= numberString.length; i++) {
+            let digitString = "";
+
+            if (numberString.charAt(i) == 'e') { //Iterates through number to see if it is in scientific notation, if so records the exponent.
+                scientificNotationFlag = true;
+                for (let j = i + 2; j <= numberString.length; j++) {
+                    digitString += numberString.charAt(j);
+                }
+                digits = parseInt(digitString);
+                s = "";
+                break;
+            }
+        }
+        if (!scientificNotationFlag) { //If not in scientific notation, just returns the number normally.
+            s = numberString;
+            return s;
+        }
+
+        let decimalFlag = false;
+        let decimalCount = 0;
+        for (let i = 0; i <= numberString.length; i++) { //Iterates through number in scientific notation and records all digits until the "e" is reached.
+            if (numberString.charAt(i) == 'e') {
+                break;
+            }
+            if (decimalFlag) {
+                decimalCount++;
+            }
+            if (numberString.charAt(i) != '.') {
+                s += numberString.charAt(i)
+            }
+            else if (numberString.charAt(i) == ".") {
+                decimalFlag = true;
+            }
+        }
+
+        for (let i = decimalCount; i <= digits - 1; i++) { //Appends 0s to the end of the number recorded above based on how many digits were records above - the amount of digits counted after the decimal was reached.
+            s+= "0";
+        }
+
+        return s;
     }
+
+    console.log(ensureNotation(10.546898));
         //Also, for tokens with over 21 decimals, javascript is going to put the amount into scientific notation.
         //So I need to find a way to ensure those sell amounts are in decimal format only.
     
