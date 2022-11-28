@@ -120,7 +120,7 @@
             buyDecimals = "{{ i.decimals }}";
             console.log(buyDecimals);
             console.log(buyToken);
-            closeModal();
+            closeModal("token_modal");
         }
         if (sellModalOpen == true) { //Sets buy token fields on click of a paticular token.
             document.getElementById("sell_token").innerHTML = "{{i.ticker}}"; //Sets the button text for buy token to the ticker of the token that was selected in the modal.
@@ -128,7 +128,7 @@
             sellDecimals = "{{ i.decimals }}";
             console.log(sellDecimals);
             console.log(sellToken);
-            closeModal();
+            closeModal("token_modal");
         }
     }
     {% endfor %}
