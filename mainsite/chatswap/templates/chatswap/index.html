@@ -2,7 +2,7 @@
 <html lang="en">
 {%load static%}
 <head>
-  <title>Chat Swap</title>
+  <title>Chatswap</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="" />
@@ -11,15 +11,21 @@
 </head>
 <body style="background-color: rgb(20,20,20);">
     <h1 class="title">Chatswap</h1>
+    <div>
     <button type="button" class="generalButton loginButton" id="login_button">Login</button>
+    <form class="loginForm" style="display: block" id="login_form">
+        <input class="inputStyle" type="text" placeholder="New Username">
+        <button class="generalButton" style="width: 100px; height: 30px; margin: 5px; margin-left: 50px;">Submit</button>
+      </form>
+    </div>
     <div class="mainbox">
         <div class="swapbox">
             <button type="button" class="generalButton selectToken" id="sell_token">Select A Token</button>
-            <input type="text" class="amountInput" placeholder="amount" id="sell_amount" onchange="getPrice('sell')">
+            <input type="text" class="inputStyle" placeholder="amount" id="sell_amount" onchange="getPrice('sell')">
           </div>
         <div class="swapbox">
             <button type="button" class="generalButton selectToken" id="buy_token">Select A Token</button>
-            <input type="text" class="amountInput" placeholder="amount" id="buy_amount" onchange="getPrice('buy')">
+            <input type="text" class="inputStyle" placeholder="amount" id="buy_amount" onchange="getPrice('buy')">
         </div>
         <div class="gasText">
             <div>
@@ -34,7 +40,7 @@
             <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Tokens: </h5>
-                <button type="button" id = "modal_close" class="generalButton close" data-dismiss="modal" aria-label="Close">
+                <button type="button" id = "token_modal_close" class="generalButton close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
         </div>
@@ -47,12 +53,11 @@
             </div>
         </div>
     </div>
-
     
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
 </body>
 </html>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 <script>
     console.log(window.ethereum);
@@ -72,6 +77,7 @@
     
      //Sets the accountPromise variable to the first account from metamask on click of the login button 
     document.getElementById("login_button").onclick = function(){
+        document.getElementById("login_form").style.display = "block";
         accountPromise = getAccount().then(accounts => {
             console.log(accounts[0]);
             return accounts[0];
@@ -83,8 +89,8 @@
       document.getElementById("token_modal").style.display = "block";
     }
      //Closes the token modal
-    function closeModal() {
-      document.getElementById("token_modal").style.display = "none";
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = "none";
     }
     //Opens the token modal and flags as being open to select a buy token
     document.getElementById("buy_token").onclick = function(){ 
@@ -100,8 +106,9 @@
       buyModalOpen = false;
       console.log("sell modal");
       };
-     //Sets close button functionality for the modal.
-    document.getElementById("modal_close").onclick = function(){closeModal()};
+     //Sets close button functionality for the modals.
+    document.getElementById("token_modal_close").onclick = function(){closeModal("token_modal")};
+
     
     //Iterates through the token object injected by django through the context parameter
     // and generates javascript onClick functionality for every token retrieved from the given tokenList in the view.
@@ -175,7 +182,7 @@
             let params;
             //console.log(document.getElementById("sell_amount").value)
             amount = document.getElementById("sell_amount").value * (10 ** (sellDecimals)); //Retrieves amount user is wishing to sell.
-            amount = ensureNotation(Math.round(amount)); //Ensures above calculation results in no hard decimals.
+            amount = ensureNotation(Math.round(amount)); //Ensures above calculation results in no hard decimals and is in standard notation.
             const Http = new XMLHttpRequest();
             let url= "https://api.0x.org/swap/v1/quote/";
             if (debug) { //Used to send quotes to the goerli testnet for debugging
@@ -284,7 +291,7 @@
             }
         }
 
-        for (let i = decimalCount; i <= digits - 1; i++) { //Appends 0s to the end of the number recorded above based on how many digits were records above - the amount of digits counted after the decimal was reached.
+        for (let i = decimalCount; i <= digits - 1; i++) { //Appends 0s to the end of the number recorded above based on how many digits were recorded above - the amount of digits counted after the decimal was reached.
             s+= "0";
         }
 

@@ -35,7 +35,7 @@
     margin-left: 2%;
     width: 40%;
 }
-.amountInput {
+.inputStyle {
     margin-left: 5px;
     padding-left: 10px;
     border: solid 1px;
@@ -74,4 +74,11 @@
     position: absolute;
     margin-left: 43.5%;
     margin-top: -60px;
+}
+.loginForm {
+    width: 200px;
+    height: 30px;
+    position: absolute;
+    top: 15px;
+    right: 75px;
 }
