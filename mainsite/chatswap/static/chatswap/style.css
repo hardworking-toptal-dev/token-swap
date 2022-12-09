@@ -40,6 +40,9 @@
     padding-left: 10px;
     border: solid 1px;
 }
+/* .input.text:focus {
+    border-color: white;
+} */
 .gasText {
     padding-top: 10px;
 }
@@ -81,4 +84,12 @@
     position: absolute;
     top: 15px;
     right: 75px;
+}
+.gasBox {
+    border: solid 1px;
+    width: 30%;
+    height: 27px;
+    float:right; 
+    margin-right: 10px;
+    position: relative;
 }

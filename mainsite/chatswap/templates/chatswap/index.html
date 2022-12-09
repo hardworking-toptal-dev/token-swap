@@ -13,9 +13,9 @@
     <h1 class="title">Chatswap</h1>
     <div>
     <button type="button" class="generalButton loginButton" id="login_button">Login</button>
-    <form class="loginForm" style="display: block" id="login_form">
-        <input class="inputStyle" type="text" placeholder="New Username">
-        <button class="generalButton" style="width: 100px; height: 30px; margin: 5px; margin-left: 50px;">Submit</button>
+    <form class="loginForm" style="display: block" id="login_form" method="none" onsubmit="postUser()">
+        <input class="inputStyle" type="text" placeholder="New Username" id="username_input">
+        <input class="generalButton" style="width: 100px; height: 30px; margin: 5px; margin-left: 50px;" type="submit"</button>
       </form>
     </div>
     <div class="mainbox">
@@ -30,7 +30,9 @@
         <div class="gasText">
             <div>
             <p style="float:left; padding-left:15px; position: absolute;">Gas Estimate:</p>
-            <p style="float:right; padding-right:15px; position absolute;" align="right" id = "gas_estimate">Test</p>
+                <div class="gasBox">
+                <p style="float:right; padding-right:15px; position absolute;" align="right" id = "gas_estimate">Test</p>
+                </div>
             </div>
             <button type="button" class="generalButton swapButton" id="swap_button">Swap</button>
         </div>
@@ -69,6 +71,24 @@
     let buyDecimals; //Amount of decimals for token user is buying
     let sellDecimals; //Amount of decimals for token user is selling
     let debug = false; //boolean to set any functions we want to use certain field values defined in the function for debugging
+    let username; //String representing value from a user inputting a new username
+
+    //Submits a post request in order to send the user's chosen username and address to the index view using fetch API.
+    async function postUser() {
+        accountPromise = getAccount().then(accounts => {
+            return accounts[0];
+        }) //This function call to retrieve the account will be put here until I can figure out a way to
+        //pull the address with the user pressing login ONLY IF the the user has already connected theyre metamask.
+        let account = await accountPromise;
+        let username = document.getElementById("username_input").value
+        var data = {address: account.toString(), "username_input": username};
+        console.log("address=" + account.toString());
+        let post = new XMLHttpRequest();
+        fetch("{% url 'index' %}", {
+            method: 'POST',
+            body: JSON.stringify(data),
+        }).then((response) => response.json())
+    }
     
      //Returns the user's account promise
     function getAccount() {
@@ -155,6 +175,7 @@
                         document.getElementById("buy_amount").placeholder = null;
                         document.getElementById("buy_amount").value = (responseDict["price"] * amount).toFixed(buyDecimals); //Sets amount of buy amount based on the buy amount inputted * the price of the buy amount.
                         document.getElementById("sell_amount").placeholder = "";
+                        document.getElementById("gas_estimate").innerHTML = responseDict["estimatedGas"];
                     }
                 }
                 if (buyOrSell == "buy") {
@@ -167,6 +188,7 @@
                         console.log(document.getElementById("sell_amount").value);
                         document.getElementById("sell_amount").value = (responseDict["price"] * amount).toFixed(sellDecimals); //Sets amount of buy amount based on the sell amount inputted * the price of the sell amount.
                         document.getElementById("buy_amount").placeholder = "";
+                        document.getElementById("gas_estimate").innerHTML = responseDict["estimatedGas"];
                     }
                 }
         }
@@ -298,7 +320,7 @@
         return s;
     }
 
-    console.log(ensureNotation(10.546898));
+    console.log(ensureNotation(0.2));
         //Also, for tokens with over 21 decimals, javascript is going to put the amount into scientific notation.
         //So I need to find a way to ensure those sell amounts are in decimal format only.
     
