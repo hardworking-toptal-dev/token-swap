@@ -93,3 +93,8 @@
     margin-right: 10px;
     position: relative;
 }
+.userBox {
+    border: solid 1px;
+    padding-left: 5px;
+    padding-right: 5px;
+}

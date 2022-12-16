@@ -33,7 +33,22 @@ def index(request):
         address = jsonDict["address"]
         print(usernameInput, address)
         if (usernameInput != None and address != None):
-            user = generalUser(address = address, username = usernameInput, lastLogin = timezone.now())
-            user.save()
+            users = generalUser.objects.filter(address=address)
+            if (users.count() == 0) :
+                user = generalUser(address = address, username = usernameInput, lastLogin = timezone.now())
+                user.save()
+            else: raise Exception("There already exists a user for this address")
         else: raise Exception("username or address is null!")
     return render(request, "chatswap/index.html", context)
+
+#View to return the username of a specific ethereum address as a json dictionary. If it cannot find a user associated with
+#the given address, then it returns "no user" as the username.
+def getUser(request, address):
+    if (request.method == 'GET'):
+        username = ""
+        users = generalUser.objects.filter(address=address)
+        if (users.count() == 1):
+            username = users[0].username
+            print(username)
+        else: username = "no user"
+    return JsonResponse({"username": username})

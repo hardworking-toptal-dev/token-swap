@@ -12,11 +12,14 @@
 <body style="background-color: rgb(20,20,20);">
     <h1 class="title">Chatswap</h1>
     <div>
-    <button type="button" class="generalButton loginButton" id="login_button">Login</button>
-    <form class="loginForm" style="display: block" id="login_form" method="none" onsubmit="postUser()">
-        <input class="inputStyle" type="text" placeholder="New Username" id="username_input">
-        <input class="generalButton" style="width: 100px; height: 30px; margin: 5px; margin-left: 50px;" type="submit"</button>
-      </form>
+        <div class="loginButton userBox" id="user_box" style="display: none">
+            none
+        </div>
+        <button type="button" class="generalButton loginButton" style="display: none" id="login_button">Login</button>
+        <form class="loginForm" style="display: none" id="login_form" method="none" onsubmit="postUser()">
+            <input class="inputStyle" type="text" placeholder="New Username" id="username_input">
+            <input class="generalButton" style="width: 100px; height: 30px; margin: 5px; margin-left: 50px;" type="submit"</button>
+        </form>
     </div>
     <div class="mainbox">
         <div class="swapbox">
@@ -63,7 +66,9 @@
 <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 <script>
     console.log(window.ethereum);
+    let connected;
     let accountPromise; //Promise object that contains the first of the user's account addresses from metamask.
+    let account; //User's ethereum address pulled from accountPromise;
     let sellModalOpen = false; //Indicates whether the user opened the token modal to select a sell token
     let buyModalOpen = false; //Indicates whether the user opened the token modal to select a buy token
     let buytoken; //Contract address for the token the user is buying
@@ -71,39 +76,80 @@
     let buyDecimals; //Amount of decimals for token user is buying
     let sellDecimals; //Amount of decimals for token user is selling
     let debug = false; //boolean to set any functions we want to use certain field values defined in the function for debugging
-    let username; //String representing value from a user inputting a new username
+    let username; //String representing value from a user inputting a username
+
+    //Checks to see if a user has connected the site to metamask without prompting them to connect
+    async function isConnected() {
+        possibleAccounts = await ethereum.request({method: 'eth_accounts'}).then(accounts => {
+            return accounts
+        })
+        if (possibleAccounts.length > 0) {
+            account = await getAccount().then(accounts => {
+                return accounts[0];
+            })
+            getUsername();
+            return true;
+        }
+        else {
+            document.getElementById("login_button").style.display = "block";
+            return false;
+        }
+    }
+    isConnected();
+
+    //Retrieves a user's username based on their ethereum address via a get request to the getUser() view. If there is a user with that username, stores it
+    //in the username variable. If there isn't (signified by the view returning "no user"), then the login form is displayed.
+    async function getUsername() { 
+        let url = "/getuser/" + account
+        let response;
+        response = await fetch(url).then((fetchReponse) => {
+            return fetchReponse.json()
+        });
+        if (response["username"] == "no user") {
+            document.getElementById("login_form").style.display = "block";
+        }
+        else {
+            username = response["username"];
+            document.getElementById("login_button").style.display = "none";
+            document.getElementById("user_box").innerHTML = username;
+            document.getElementById("user_box").style.display = "block";
+        }
+    }
 
     //Submits a post request in order to send the user's chosen username and address to the index view using fetch API.
     async function postUser() {
-        accountPromise = getAccount().then(accounts => {
+        /*accountPromise = getAccount().then(accounts => {
             return accounts[0];
         }) //This function call to retrieve the account will be put here until I can figure out a way to
         //pull the address with the user pressing login ONLY IF the the user has already connected theyre metamask.
-        let account = await accountPromise;
+        account = await accountPromise;*/
         let username = document.getElementById("username_input").value
         var data = {address: account.toString(), "username_input": username};
         console.log("address=" + account.toString());
-        let post = new XMLHttpRequest();
         fetch("{% url 'index' %}", {
             method: 'POST',
             body: JSON.stringify(data),
-        }).then((response) => response.json())
+        })//.then((response) => response.json())
     }
     
      //Returns the user's account promise
-    function getAccount() {
+    async function getAccount() {
         return ethereum.request({ method: 'eth_requestAccounts'});
     }
     
+    //Need to figure out how to see if a user
+     //is already signed in on metamask in order to pull theyre account so that I'm not required to press
+     // this button everytime I want to test functionality that includes the user's address
      //Sets the accountPromise variable to the first account from metamask on click of the login button 
-    document.getElementById("login_button").onclick = function(){
-        document.getElementById("login_form").style.display = "block";
+    document.getElementById("login_button").onclick = async function(){
         accountPromise = getAccount().then(accounts => {
-            console.log(accounts[0]);
+            console.log(accounts[0] + "1");
             return accounts[0];
         })
-    };
-    
+        account = await accountPromise
+        getUsername();
+        };
+
      //Opens the token modal
     function getModal() {
       document.getElementById("token_modal").style.display = "block";
@@ -197,7 +243,6 @@
     //Returns a quote signed or unsigned based on if it is needed for token approval/allowances or to send the transaction to the blockchain.
     async function getQuote(approval) { 
         if (buyToken != null && sellToken != null) {
-            const account = await accountPromise;
             console.log(account); //testing getAccount()
             let responseDict;
             let amount;
@@ -240,9 +285,6 @@
     
     //Ensures accountPromise is set to the account promise object that returns the user's first account.
     document.getElementById("swap_button").onclick = function() { 
-        accountPromise = getAccount().then(accounts => {
-            return accounts[0];
-        })
         swap();
     }
     
@@ -256,7 +298,6 @@
         const maxApproval = "10000000000000000000000000000000000"; // approval amount that may only be used for debugging, need to do more research to see if there is a security issue for users by allowing an unlimited amount token approval 
         console.log(maxApproval);
         const contract = new web3access.eth.Contract(abi, sellToken);
-        const account = await accountPromise;
         let allowanceQuote = await getQuote(true);
         let swapQuote = await getQuote(false);
         allowanceQuote.onreadystatechange = (e) => { //Maybe should check if user has already set approval for sellToken passed in above depending on whether or not I decide to have users set unlimited token allowances per token approval.
