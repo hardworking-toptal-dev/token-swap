@@ -19,15 +19,17 @@ class ChatUser(WebsocketConsumer):
         )
     
     #Calls chatMessage with async_to_sync() with the group send parameter and then passes in the subsequent data definition
-    # of "message" to the event parameter as a dictionary, which then defines how it should be sent with the self.send() method.
+    # of "message" and "username" to the event parameter as a dictionary, which then defines how it should be sent with the self.send() method.
     def receive(self, text_data):
         textJSON = json.loads(text_data)
         message = textJSON["message"]
+        username = textJSON["username"]
 
         async_to_sync(self.channel_layer.group_send)(
-            self.group, {"type": "chatMessage", "message": message}
+            self.group, {"type": "chatMessage", "message": message, "username": username}
         )
 
     def chatMessage(self, event):
         message = event["message"]
-        self.send(text_data=json.dumps({"message": message}))
+        username = event["username"]
+        self.send(text_data=json.dumps({"message": message, "username": username}))

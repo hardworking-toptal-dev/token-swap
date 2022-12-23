@@ -42,12 +42,12 @@
     </div>
     <div class="chatBox">
         <div class="incomingChats" id="incoming_chats">
-            <div class="individualChat">
+            {% comment %} <div class="individualChat">
                 <span class="individualChatUser">Test:</span> <span>test</span>
             </div>
             <div class="individualChat">
                 <span class="individualChatUser">Test:</span> <span>Hello</span>
-            </div>
+            </div> {% endcomment %}
         </div>
         <div class="chatBoxBottom">
             <span class="chatBoxUser" id="chat_user_box">Please login</span>
@@ -129,6 +129,7 @@
             document.getElementById("user_box").innerHTML = username;
             document.getElementById("chat_user_box").innerHTML = username;
             document.getElementById("user_box").style.display = "block";
+            return response["username"];
         }
     }
 
