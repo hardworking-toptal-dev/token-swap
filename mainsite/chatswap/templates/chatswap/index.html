@@ -40,8 +40,23 @@
             <button type="button" class="generalButton swapButton" id="swap_button">Swap</button>
         </div>
     </div>
+    <div class="chatBox">
+        <div class="incomingChats" id="incoming_chats">
+            <div class="individualChat">
+                <span class="individualChatUser">Test:</span> <span>test</span>
+            </div>
+            <div class="individualChat">
+                <span class="individualChatUser">Test:</span> <span>Hello</span>
+            </div>
+        </div>
+        <div class="chatBoxBottom">
+            <span class="chatBoxUser" id="chat_user_box">Please login</span>
+            <input class="chatInput" id="chat_input"></input>
+            <button class="generalButton chatButton" id="chat_button">Enter</button>
+        </div>
+    </div>
   <div class="modal" style="background-color: transparent;" tabindex="-1" role="dialog" id = "token_modal">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog" role="document" style="border: solid 3px;">
             <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Tokens: </h5>
@@ -64,9 +79,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<script src="{% static 'chatswap/chat.js' %}"></script>
 <script>
     console.log(window.ethereum);
-    let connected;
     let accountPromise; //Promise object that contains the first of the user's account addresses from metamask.
     let account; //User's ethereum address pulled from accountPromise;
     let sellModalOpen = false; //Indicates whether the user opened the token modal to select a sell token
@@ -112,6 +127,7 @@
             username = response["username"];
             document.getElementById("login_button").style.display = "none";
             document.getElementById("user_box").innerHTML = username;
+            document.getElementById("chat_user_box").innerHTML = username;
             document.getElementById("user_box").style.display = "block";
         }
     }

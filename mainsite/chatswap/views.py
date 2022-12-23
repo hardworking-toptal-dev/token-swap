@@ -12,7 +12,7 @@ import json
 # Main view for the Chatswap web application.
 @csrf_exempt
 def index(request):
-    tokensRaw = tokenlist.getTokenData("https://tokens.coingecko.com/uniswap/all.json") #Determines tokens displayed in the token modal.
+    tokensRaw = tokenlist.getTokenData("https://gateway.ipfs.io/ipns/tokens.uniswap.org") #Determines tokens displayed in the token modal.
     tokens = []
     for i in tokensRaw:
         ticker = i["ticker"]
