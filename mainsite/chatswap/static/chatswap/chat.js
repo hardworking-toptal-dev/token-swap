@@ -1,12 +1,13 @@
 const socket = new WebSocket("ws://" + window.location.host);
 
-//Defines what should happen after a message is receive by the websocket by taking the recieved data, creating new DOM objects,
+//Defines what should happen after a message is received by the websocket by taking the recieved data, creating new DOM objects,
 //and filling them with the data.
 socket.onmessage = function(e) {
     let data = JSON.parse(e.data);
-    console.log(data);
+    console.log(data.id);
 
     chatDiv = document.createElement("div");
+    chatDiv.id = "chat_" + data.id;
     chatDiv.classList.add("individualChat");
     messageSpan = document.createElement("span");
     userSpan = document.createElement("span");
@@ -29,11 +30,17 @@ socket.onclose = function(e) {
 
 //Defines how to send a message from the client to the websocket server by taking the values from the input, and packaging it
 //in the socket.send() method as a JSON dictionary.
-async function send() {
-    let username = await retrieveUsername();
+function send() {
+    let username = retrieveUsername();
     let messageInput = document.getElementById("chat_input");
     message = messageInput.value;
-    socket.send(JSON.stringify({"message" : message, "username": username}));
+    try {
+        socket.send(JSON.stringify({"message" : message, "username": username}));
+    } 
+    catch (exception) {
+        console.log(exception);
+        return;
+    }
     messageInput.value = "";
 }
 
@@ -46,6 +53,6 @@ document.getElementById("chat_input").addEventListener("keydown", function(e) {
     }
 })
 
-async function retrieveUsername() {
-    return window.getUsername();
+function retrieveUsername() {
+    return window.globalUsername();
 }

@@ -129,8 +129,11 @@
             document.getElementById("user_box").innerHTML = username;
             document.getElementById("chat_user_box").innerHTML = username;
             document.getElementById("user_box").style.display = "block";
-            return response["username"];
         }
+    }
+    //Used to retrieve the username by chat.js by making it globally available within the browser via window.globalUsername();
+    function globalUsername() {
+        return username;
     }
 
     //Submits a post request in order to send the user's chosen username and address to the index view using fetch API.

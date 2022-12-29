@@ -48,7 +48,10 @@ def getUser(request, address):
         username = ""
         users = generalUser.objects.filter(address=address)
         if (users.count() == 1):
-            username = users[0].username
+            user = users[0]
+            username = user.username
             print(username)
+            user.lastLogin = timezone.now()
+            user.save()
         else: username = "no user"
     return JsonResponse({"username": username})
