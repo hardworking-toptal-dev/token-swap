@@ -21,8 +21,10 @@ class ChatUser(WebsocketConsumer):
             self.group, self.channel_name
         )
     
-    #Calls chatMessage with async_to_sync() with the group send parameter and then passes in the subsequent data definition
+    #Calls chatMessage() or vote() with async_to_sync() with the group send parameter and then passes in the subsequent data definition
     # of "message" and "username" to the event parameter as a dictionary, which then defines how it should be sent with the self.send() method.
+    #If it is a vote that is being sent, it adds the up vote or downvote to the corresponding message's model and then sends it to the websocket group
+    # via vote()
     def receive(self, text_data):
         textJSON = json.loads(text_data)
         
@@ -47,10 +49,17 @@ class ChatUser(WebsocketConsumer):
             print(str(e) + " exception 2")
 
 
+        #These statements rely on the above try except statements, which depending on which type of data string they receive from
+        #a javascript client (either a chat or vote), will throw an excepction due to not having a dictionary definition for a it
+        #is trying to pull from textJSON, if it gets an exception it will set those variables to null which determines which of the
+        #following statements is used.
+
+        #Used for chat messages
         if (text != None and text != ""):
             async_to_sync(self.channel_layer.group_send)(
                 self.group, {"type": "chatMessage", "message": text, "username": username, "id": str(messageId)}
             )
+        #Used for votes
         elif (vote != None):
             votedMessage = messageModel.objects.get(id = voteMessageId)
             print(votedMessage)
@@ -76,3 +85,4 @@ class ChatUser(WebsocketConsumer):
         vote = event["vote"]
         id = event["id"]
         self.send(text_data=json.dumps({"type" : "vote", "vote": vote, "id": id}))
+    

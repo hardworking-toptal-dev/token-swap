@@ -1,10 +1,11 @@
 const socket = new WebSocket("ws://" + window.location.host);
 
-//Defines what should happen after a message is received by the websocket by taking the recieved data, creating new DOM objects,
+//Defines what should happen after a message or vote is received by the websocket by taking the recieved data, creating new DOM objects,
 //and filling them with the data.
 socket.onmessage = function(e) {
     let data = JSON.parse(e.data);
 
+    //Creates all DOM elements needed for a chat, and appends it to a div which contains all elements
     if (data.type == "chat") {
         chatDiv = document.createElement("div");
         chatDiv.id = "chat_" + data.id;
@@ -25,6 +26,8 @@ socket.onmessage = function(e) {
         downVote.onclick = function(e) {
             send("vote", data.id, "down");
         }
+        voteTally = document.createElement("span");
+        voteTally.id = "tally_" + data.id;
     
         let username = data.username;
         text = document.createTextNode(data.message);
@@ -36,10 +39,23 @@ socket.onmessage = function(e) {
         chatDiv.appendChild(messageSpan);
         chatDiv.appendChild(upVote);
         chatDiv.appendChild(downVote);
+        chatDiv.appendChild(voteTally);
         document.getElementById("incoming_chats").appendChild(chatDiv);
     }
+    //Increments or decrements a chat's voteTally span depending if an up vote or down vote is received by the socket.
     if (data.type == "vote") {
-        
+        if(data.vote == "up"){
+            currentTally = parseInt(document.getElementById("tally_" + data.id).innerHTML);
+            if (isNaN(currentTally)) currentTally = 0;
+            currentTally++;
+            document.getElementById("tally_" + data.id).innerHTML  = (currentTally).toString();
+        }
+        if(data.vote == "down"){
+            currentTally = parseInt(document.getElementById("tally_" + data.id).innerHTML);
+            if (isNaN(currentTally)) currentTally = 0;
+            currentTally--;
+            document.getElementById("tally_" + data.id).innerHTML  = (currentTally).toString();
+        }
     }
 
 };
@@ -52,7 +68,7 @@ socket.onclose = function(e) {
 //in the socket.send() method as a JSON dictionary.
 function send(type, id, vote) {
     if (type == "chat") {
-        let username = retrieveUsername();
+        let username = window.globalUsername();
         let messageInput = document.getElementById("chat_input");
         message = messageInput.value;
         try {
@@ -84,7 +100,3 @@ document.getElementById("chat_input").addEventListener("keydown", function(e) {
         send("chat");
     }
 })
-
-function retrieveUsername() {
-    return window.globalUsername();
-}
