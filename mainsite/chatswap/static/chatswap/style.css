@@ -1,3 +1,13 @@
+@font-face {
+    font-family: 'D3 Digitalism';
+    src: url('mainsite/chatswap/static/chatswap/font/d3-digitalism-font/D3Digitalism.woff2') format('woff2'),
+    url('static/chatswap/font/d3-digitalism-font/D3Digitalism.woff') format('woff'),
+    url('static/chatswap/font/d3-digitalism-font/D3Digitalism.eot'),
+    url('static/chatswap/font/d3-digitalism-font/D3Digitalism.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
 * {
     background-color: rgb(20, 20, 20);
     color:rgb(255, 255, 255);
@@ -22,6 +32,7 @@
 .generalButton {
     /* background-color: white; */
     border: solid 1px;
+
 }
 .generalButton:hover {
     background-color: gray;
@@ -34,11 +45,13 @@
     margin-top: 4%;
     margin-left: 2%;
     width: 40%;
+    font-size: smaller;
 }
 .inputStyle {
     margin-left: 5px;
     padding-left: 10px;
     border: solid 1px;
+    width: 50%;
 }
 /* .input.text:focus {
     border-color: white;
@@ -116,6 +129,9 @@
     height: 15%;
     bottom: 0;
     right: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
 }
 .chatInput {
     border: solid 1px;
@@ -161,6 +177,13 @@
 .individualChatUser {
     font-weight: bold;
 }
+.voteButton{
+    margin: 2px;
+}
+.voteButton:hover {
+    cursor: pointer;
+}
+
 
 /* .incomingChats > :first-child { 
     margin-top: auto;

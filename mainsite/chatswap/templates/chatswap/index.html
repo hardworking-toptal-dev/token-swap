@@ -8,8 +8,14 @@
   <meta name="description" content="" />
   <link rel="stylesheet" type="text/css" href="{% static 'chatswap/style.css' %}" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  <script src="https://kit.fontawesome.com/08d4c55d43.js" crossorigin="anonymous"></script>
+  {% comment %} <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital@0;1&display=swap" rel="stylesheet"> {% endcomment %}
 </head>
 <body style="background-color: rgb(20,20,20);">
+    <style>
+    </style>
     <h1 class="title">Chatswap</h1>
     <div>
         <div class="loginButton userBox" id="user_box" style="display: none">
@@ -43,7 +49,7 @@
     <div class="chatBox">
         <div class="incomingChats" id="incoming_chats">
             {% comment %} <div class="individualChat">
-                <span class="individualChatUser">Test:</span> <span>test</span>
+                <span class="individualChatUser">Test:</span> <span>test</span><i class="fa-solid fa-caret-up voteButton" id="up_test"></i><i class="fa-solid fa-caret-down voteButton" id="down_test"></i>
             </div>
             <div class="individualChat">
                 <span class="individualChatUser">Test:</span> <span>Hello</span>
