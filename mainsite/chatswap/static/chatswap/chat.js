@@ -46,15 +46,16 @@ socket.onmessage = function(e) {
     if (data.type == "vote") {
         if(data.vote == "up"){
             currentTally = parseInt(document.getElementById("tally_" + data.id).innerHTML);
-            if (isNaN(currentTally)) currentTally = 0;
+            if (isNaN(currentTally))
+                currentTally = 0;
             currentTally++;
-            document.getElementById("tally_" + data.id).innerHTML  = (currentTally).toString();
+            document.getElementById("tally_" + data.id).innerHTML = (currentTally).toString();
         }
         if(data.vote == "down"){
             currentTally = parseInt(document.getElementById("tally_" + data.id).innerHTML);
             if (isNaN(currentTally)) currentTally = 0;
             currentTally--;
-            document.getElementById("tally_" + data.id).innerHTML  = (currentTally).toString();
+            document.getElementById("tally_" + data.id).innerHTML = (currentTally).toString();
         }
     }
 

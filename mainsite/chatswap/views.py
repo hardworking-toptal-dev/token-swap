@@ -39,6 +39,7 @@ def index(request):
                 user.save()
             else: raise Exception("There already exists a user for this address")
         else: raise Exception("username or address is null!")
+        
     return render(request, "chatswap/index.html", context)
 
 #View to return the username of a specific ethereum address as a json dictionary. If it cannot find a user associated with
@@ -54,4 +55,8 @@ def getUser(request, address):
             user.lastLogin = timezone.now()
             user.save()
         else: username = "no user"
+        
     return JsonResponse({"username": username})
+
+def reactMigrate(request):
+    return render(request, "chatswap/ReactMigrate.html")

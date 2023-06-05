@@ -23,8 +23,8 @@
         </div>
         <button type="button" class="generalButton loginButton" style="display: none" id="login_button">Login</button>
         <form class="loginForm" style="display: none" id="login_form" method="none" onsubmit="postUser()">
-            <input class="inputStyle" type="text" placeholder="New Username" id="username_input">
-            <input class="generalButton" style="width: 100px; height: 30px; margin: 5px; margin-left: 50px;" type="submit"</button>
+            <input class="inputStyle" style="width: 90%" type="text" placeholder="New Username" id="username_input">
+            <input class="generalButton" style="width: 100px; height: 30px; margin: 5px; margin-left: 45px;" type="submit"</button>
         </form>
     </div>
     <div class="mainbox">
@@ -40,7 +40,7 @@
             <div>
             <p style="float:left; padding-left:15px; position: absolute;">Gas Estimate:</p>
                 <div class="gasBox">
-                <p style="float:right; padding-right:15px; position absolute;" align="right" id = "gas_estimate">Test</p>
+                <p style="float:right; padding-right:15px; position absolute; background-color: transparent;" align="right" id = "gas_estimate">Test</p>
                 </div>
             </div>
             <button type="button" class="generalButton swapButton" id="swap_button">Swap</button>
@@ -103,7 +103,7 @@
     async function isConnected() {
         possibleAccounts = await ethereum.request({method: 'eth_accounts'}).then(accounts => {
             return accounts
-        })
+        });
         if (possibleAccounts.length > 0) {
             account = await getAccount().then(accounts => {
                 return accounts[0];
@@ -232,7 +232,7 @@
             const Http = new XMLHttpRequest();
             let url= "https://api.0x.org/swap/v1/price/";
             if (debug) {
-                url = "https://goerli.api.0x.org/swap/v1/price/"
+                url = "https://mumbai.api.0x.org/swap/v1/price/"
             }
             const params = "buyToken=" + buyToken + "&sellToken=" + sellToken + "&" + buyOrSell;
             
@@ -279,7 +279,7 @@
             const Http = new XMLHttpRequest();
             let url= "https://api.0x.org/swap/v1/quote/";
             if (debug) { //Used to send quotes to the goerli testnet for debugging
-                url= "https://goerli.api.0x.org/swap/v1/quote/";
+                url= "https://mumbai.api.0x.org/swap/v1/quote/";
             }
             if (approval) { //Skips validation based on if quote is to be used to set token allowances/approval.
                 params = "buyToken=" + buyToken + "&sellToken=" + sellToken + "&sellAmount=" + amount + "&takerAddress=" + account + "&skipValidation=true"; 
@@ -387,11 +387,16 @@
         return s;
     }
 
-    console.log(ensureNotation(0.2));
-        //Also, for tokens with over 21 decimals, javascript is going to put the amount into scientific notation.
-        //So I need to find a way to ensure those sell amounts are in decimal format only.
-    
-    
+    //Used to test using signatures from accounts accessed with web3.js/metamask to authenticate a user and verify their actions
+    //It seems that it returns a signature for an individual message that is different for every string, but the same for the exact string.
+    async function sign(text) { 
+        access = new Web3(window.ethereum);
+        sig = access.eth.personal.sign(text, "0x1FE735e1063Da072b4e59ab4c8A60F0522D1aC82");
+        console.log(await sig);
+    }
+
+
+    console.log(ensureNotation(0.2));    
         //Have figured out how to set token approvals/allowances in the swap function, which fixes the issues of error code 105.
         //Basically just have to set the token approval PRIOR to calling the quote. I can do this by requesting the quote with 
         //the skipValidation parameter set to true in order to pull the allowanceTarget to then be used in the .approve() method 
