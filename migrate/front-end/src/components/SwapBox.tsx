@@ -1,18 +1,22 @@
 import styled from "styled-components";
 import { INPUT_COLOR } from "../colors";
-import Button from "./Button";
+import MainButton from "./Button";
+import { Form, InputGroup } from "react-bootstrap";
 
 export default function SwapBox(props: { buttonText: string }) {
   return (
-    <Wrapper>
-      <Button width="30%" height="100%" text={props.buttonText}></Button>
-    </Wrapper>
+    <InputWrapper className="mb-3" size="sm" borderRadius="30px">
+      <MainButton className="" width="30%" text={props.buttonText}></MainButton>
+      <SwapForm width={"90px"} />
+    </InputWrapper>
   );
 }
 
-const Wrapper = styled.div`
+const InputWrapper = styled(InputGroup)`
+  width: 90%;
+`;
+
+const SwapForm = styled(Form.Control)`
   background-color: ${INPUT_COLOR};
-  width: 80%;
-  height: 20%;
-  border-radius: 15px;
+  border-color: ${INPUT_COLOR};
 `;

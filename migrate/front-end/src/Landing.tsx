@@ -17,6 +17,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 1%;
 `;
 const Title = styled.h1`
   font-weight: bolder;

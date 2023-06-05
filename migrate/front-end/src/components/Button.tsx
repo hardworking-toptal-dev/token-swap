@@ -1,24 +1,26 @@
 import styled from "styled-components";
-import { MAIN_COLOR, MAIN_COLOR_ON_CLICK, MAIN_TEXT_COLOR } from "../colors";
+import { MAIN_COLOR, MAIN_COLOR_ON_HOVER, MAIN_TEXT_COLOR } from "../colors";
+import { Button } from "react-bootstrap";
 
-export default function Button(props: {
+export default function MainButton(props: {
   text: string;
   width: string;
-  height: string;
+  className: string;
 }) {
-  const Button = styled.button`
-    &:active {
-      background-color: ${MAIN_COLOR_ON_CLICK};
+  const MainButton = styled(Button)`
+    &:hover {
+      background-color: ${MAIN_COLOR_ON_HOVER} !important;
+      border-color: ${MAIN_COLOR_ON_HOVER};
     }
-    height: ${props.height};
+    &:active {
+      background-color: ${MAIN_COLOR} !important;
+      border-color: ${MAIN_COLOR_ON_HOVER} !important;
+    }
     width: ${props.width};
-    border-radius: 15px;
-    background-color: ${MAIN_COLOR};
+    /* border-radius: 15px; */
+    background-color: ${MAIN_COLOR} !important;
     color: ${MAIN_TEXT_COLOR};
-    text-align: center;
-    outline: none;
-    border: none;
-    padding: 5px 5px;
+    border-color: ${MAIN_COLOR};
   `;
-  return <Button>{props.text}</Button>;
+  return <MainButton className={props.className}>{props.text}</MainButton>;
 }
