@@ -19,4 +19,11 @@ const InputWrapper = styled(InputGroup)`
 const SwapForm = styled(Form.Control)`
   background-color: ${INPUT_COLOR};
   border-color: ${INPUT_COLOR};
+  form {
+    overflow: hidden;
+  }
+  input {
+    float: right;
+    clear: both;
+  }
 `;

@@ -3,9 +3,9 @@ import { INPUT_COLOR, MAIN_COMPONENT_COLOR, MAIN_TEXT_COLOR } from "../colors";
 import SwapBox from "./SwapBox";
 import MainButton from "./Button";
 
-export default function TradingBox() {
+export default function TradingBox(props: any) {
   return (
-    <Wrapper className="rounded-3">
+    <Wrapper className={props.className + " rounded-3"}>
       <SwapBoxes>
         <SwapBox buttonText="BUY TOKEN" />
         <SwapBox buttonText="SELL TOKEN" />
