@@ -2,11 +2,28 @@ import styled from "styled-components";
 import { INPUT_COLOR } from "../colors";
 import MainButton from "./Button";
 import { Form, InputGroup } from "react-bootstrap";
+import { token } from "../types";
+import TokenModal from "./TokenModal";
+import { useEffect, useState } from "react";
 
-export default function SwapBox(props: { buttonText: string }) {
+export default function SwapBox(props: {
+  buttonText: string;
+  tokens: token[];
+}) {
+  const [modalShown, setModalShown] = useState({ show: false });
+  function onClick() {
+    setModalShown({ show: true });
+  }
+  console.log(modalShown);
   return (
     <InputWrapper className="mb-3" size="sm" borderRadius="30px">
-      <MainButton className="" width="30%" text={props.buttonText}></MainButton>
+      <TokenModal shown={modalShown} tokens={props.tokens} />
+      <MainButton
+        onClick={onClick}
+        className=""
+        width="30%"
+        text={props.buttonText}
+      ></MainButton>
       <SwapForm width={"90px"} />
     </InputWrapper>
   );

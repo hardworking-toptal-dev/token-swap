@@ -2,6 +2,7 @@ import styled from "styled-components";
 import TradingBox from "./components/TradingBox";
 import ChatBox from "./components/ChatBox";
 import { BANNER_COLOR, MAIN_TEXT_COLOR } from "./colors";
+import Example from "./components/TrendsTable";
 
 export function Landing() {
   return (
@@ -11,7 +12,8 @@ export function Landing() {
       </Banner>
       <ChatAndContentWrapper>
         <ContentWrapper>
-          <LandingTradingBox />
+          <LandingTradingBox tokenListURL="https://gateway.ipfs.io/ipns/tokens.uniswap.org" />
+          <Example />
         </ContentWrapper>
         <ChatBox />
       </ChatAndContentWrapper>
@@ -31,7 +33,6 @@ const ChatAndContentWrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  height: 100%;
 `;
 const Banner = styled.div`
   font-weight: bolder;
@@ -48,12 +49,14 @@ const Banner = styled.div`
 `;
 const ContentWrapper = styled.div`
   display: flex;
-  height: 100%;
+  flex-direction: column;
   width: 100%;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-items: center;
+  /* background-color: black; */
+  margin-top: 3%;
 `;
 const LandingTradingBox = styled(TradingBox)`
-  margin-left: 20%;
-  margin-bottom: 15%;
+  margin-top: 3%;
+  margin-bottom: 2%;
 `;

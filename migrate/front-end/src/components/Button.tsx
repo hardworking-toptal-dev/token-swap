@@ -6,8 +6,9 @@ export default function MainButton(props: {
   text: string;
   width: string;
   className: string;
+  onClick: Function;
 }) {
-  const MainButton = styled(Button)`
+  const StyledMainButton = styled(Button)`
     &:hover {
       background-color: ${MAIN_COLOR_ON_HOVER} !important;
       border-color: ${MAIN_COLOR_ON_HOVER};
@@ -22,5 +23,9 @@ export default function MainButton(props: {
     color: ${MAIN_TEXT_COLOR};
     border-color: ${MAIN_COLOR};
   `;
-  return <MainButton className={props.className}>{props.text}</MainButton>;
+  return (
+    <StyledMainButton className={props.className} onClick={props.onClick}>
+      {props.text}
+    </StyledMainButton>
+  );
 }

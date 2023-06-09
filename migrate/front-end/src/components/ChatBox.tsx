@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { INPUT_COLOR, MAIN_COLOR, MAIN_COMPONENT_COLOR } from "../colors";
+import { INPUT_COLOR, MAIN_COMPONENT_COLOR } from "../colors";
 import { Form, InputGroup } from "react-bootstrap";
 import MainButton from "./Button";
 
@@ -8,7 +8,12 @@ export default function ChatBox() {
     <Wrapper className="rounded-3">
       <InputGroup>
         <ChatInput></ChatInput>
-        <MainButton className="" width="" text="Enter"></MainButton>
+        <MainButton
+          onClick={() => null}
+          className=""
+          width=""
+          text="Enter"
+        ></MainButton>
       </InputGroup>
     </Wrapper>
   );
