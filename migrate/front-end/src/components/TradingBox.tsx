@@ -2,14 +2,28 @@ import styled from "styled-components";
 import { INPUT_COLOR, MAIN_COMPONENT_COLOR, MAIN_TEXT_COLOR } from "../colors";
 import SwapBox from "./SwapBox";
 import MainButton from "./Button";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { token } from "../types";
 
 export default function TradingBox(props: {
   className?: string;
   tokenListURL: string;
 }) {
+  const nullToken: token = {
+    address: "",
+    chainId: 0,
+    decimals: 0,
+    extensions: undefined,
+    logoURI: "",
+    name: "",
+    symbol: "",
+  };
+
   const [tokens, setTokens] = useState([] as token[]);
+  const [buyToken, setBuyToken] = useState(nullToken);
+  const [sellToken, setSellToken] = useState(nullToken);
+  const [buyTokenText, setBuyTokenText] = useState("BUY TOKEN");
+  const [sellTokenText, setSellTokenText] = useState("SELL TOKEN");
 
   useEffect(() => {
     fetch(props.tokenListURL)
@@ -25,11 +39,24 @@ export default function TradingBox(props: {
       });
   }, [props.tokenListURL]);
 
+  useEffect(() => {
+    if (buyToken.symbol) setBuyTokenText(buyToken.symbol);
+    if (sellToken.symbol) setSellTokenText(sellToken.symbol);
+  }, [buyToken, sellToken]);
+
   return (
     <Wrapper className={props.className + " rounded-3"}>
       <SwapBoxes>
-        <SwapBox buttonText="BUY TOKEN" tokens={tokens} />
-        <SwapBox buttonText="SELL TOKEN" tokens={tokens} />
+        <SwapBox
+          setSelectedToken={setBuyToken}
+          buttonText={buyTokenText}
+          tokens={tokens}
+        />
+        <SwapBox
+          setSelectedToken={setSellToken}
+          buttonText={sellTokenText}
+          tokens={tokens}
+        />
       </SwapBoxes>
       <GasWrapper>
         <Gas className="rounded-2">

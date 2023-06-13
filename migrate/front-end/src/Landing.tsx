@@ -12,7 +12,7 @@ export function Landing() {
       </Banner>
       <ChatAndContentWrapper>
         <ContentWrapper>
-          <LandingTradingBox tokenListURL="https://gateway.ipfs.io/ipns/tokens.uniswap.org" />
+          <LandingTradingBox tokenListURL="https://tokens.coingecko.com/uniswap/all.json" />
           <Example />
         </ContentWrapper>
         <ChatBox />

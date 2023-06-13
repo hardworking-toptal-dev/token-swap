@@ -16,16 +16,21 @@ import { Token } from "@mui/icons-material";
 export default function TokenModal(props: {
   shown: { show: boolean };
   tokens: token[];
+  setSelectedToken: Function;
 }) {
   const [tokens, setTokens] = useState(props.tokens);
   useEffect(() => {
     setTokens(props.tokens);
   }, [props.tokens]);
 
-  const handleClose = () => setShow({ show: false });
+  const handleClose = (token: token) => {
+    setShow({ show: false });
+    if (token) props.setSelectedToken(token);
+  };
 
   const [show, setShow] = useState(props.shown);
   useEffect(() => {
+    setSearchValue("");
     setShow(props.shown);
   }, [props.shown]);
 
@@ -35,8 +40,8 @@ export default function TokenModal(props: {
     );
 
     const tokenElements = searchedTokens.map((token) => (
-      <Item action={true} onClick={handleClose}>
-        {token.name}
+      <Item action={true} onClick={() => handleClose(token)}>
+        {token.name} ({token.symbol})
       </Item>
     ));
     return <List>{tokenElements}</List>;

@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 export default function SwapBox(props: {
   buttonText: string;
   tokens: token[];
+  setSelectedToken: Function;
 }) {
   const [modalShown, setModalShown] = useState({ show: false });
   function onClick() {
@@ -17,7 +18,11 @@ export default function SwapBox(props: {
   console.log(modalShown);
   return (
     <InputWrapper className="mb-3" size="sm" borderRadius="30px">
-      <TokenModal shown={modalShown} tokens={props.tokens} />
+      <TokenModal
+        setSelectedToken={props.setSelectedToken}
+        shown={modalShown}
+        tokens={props.tokens}
+      />
       <MainButton
         onClick={onClick}
         className=""

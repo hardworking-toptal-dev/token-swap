@@ -8,6 +8,8 @@ import {
   MAIN_COMPONENT_COLOR,
   MAIN_TEXT_COLOR,
 } from "../colors";
+import { borders } from "@mui/system";
+import { BorderAllRounded } from "@mui/icons-material";
 
 //example data type
 type Person = {
@@ -160,11 +162,6 @@ const Example = () => {
             pagination: { pageSize: 5, pageIndex: 0 },
           }}
           muiTablePaginationProps={{ rowsPerPageOptions: [5] }}
-          muiTablePaperProps={{
-            sx: {
-              backgroundColor: MAIN_COMPONENT_COLOR,
-            },
-          }}
         />
       </ThemeProvider>
     </Wrapper>
@@ -184,6 +181,7 @@ const theme = createTheme({
     primary: { main: MAIN_COLOR },
     divider: INPUT_COLOR,
   },
+  shape: { borderRadius: 20 },
 });
 
 export default Example;
