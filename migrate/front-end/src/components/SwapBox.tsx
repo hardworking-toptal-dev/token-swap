@@ -1,21 +1,30 @@
 import styled from "styled-components";
 import { INPUT_COLOR } from "../colors";
-import MainButton from "./Button";
+import MainButton from "./MainButton";
 import { Form, InputGroup } from "react-bootstrap";
 import { token } from "../types";
 import TokenModal from "./TokenModal";
-import { useEffect, useState } from "react";
+import { BaseSyntheticEvent, useEffect, useState } from "react";
 
 export default function SwapBox(props: {
   buttonText: string;
   tokens: token[];
   setSelectedToken: Function;
+  setTokenAmount: Function;
+  tokenAmount: number;
 }) {
   const [modalShown, setModalShown] = useState({ show: false });
+  const [amountText, setAmountText] = useState("");
+
   function onClick() {
     setModalShown({ show: true });
   }
-  console.log(modalShown);
+  function handleOnChange(params: BaseSyntheticEvent) {
+    props.setTokenAmount(Number.parseFloat(params.target.value));
+  }
+  useEffect(() => {
+    if (props.tokenAmount) setAmountText(props.tokenAmount.toString());
+  }, [props.tokenAmount]);
   return (
     <InputWrapper className="mb-3" size="sm" borderRadius="30px">
       <TokenModal
@@ -29,7 +38,7 @@ export default function SwapBox(props: {
         width="30%"
         text={props.buttonText}
       ></MainButton>
-      <SwapForm width={"90px"} />
+      <SwapForm width={"90px"} onChange={handleOnChange} value={amountText} />
     </InputWrapper>
   );
 }

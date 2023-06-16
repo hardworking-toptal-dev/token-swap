@@ -1,15 +1,8 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { MaterialReactTable, type MRT_ColumnDef } from "material-react-table";
 import { createTheme, ThemeProvider } from "@mui/material";
 import styled from "styled-components";
-import {
-  INPUT_COLOR,
-  MAIN_COLOR,
-  MAIN_COMPONENT_COLOR,
-  MAIN_TEXT_COLOR,
-} from "../colors";
-import { borders } from "@mui/system";
-import { BorderAllRounded } from "@mui/icons-material";
+import { INPUT_COLOR, MAIN_COLOR, MAIN_COMPONENT_COLOR } from "../colors";
 
 //example data type
 type Person = {

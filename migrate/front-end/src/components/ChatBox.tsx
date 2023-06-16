@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { INPUT_COLOR, MAIN_COMPONENT_COLOR } from "../colors";
 import { Form, InputGroup } from "react-bootstrap";
-import MainButton from "./Button";
+import MainButton from "./MainButton";
 
 export default function ChatBox() {
   return (

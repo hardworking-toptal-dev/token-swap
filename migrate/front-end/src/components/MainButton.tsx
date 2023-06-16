@@ -5,7 +5,7 @@ import { Button } from "react-bootstrap";
 export default function MainButton(props: {
   text: string;
   width: string;
-  className: string;
+  className?: string;
   onClick: Function;
 }) {
   const StyledMainButton = styled(Button)`

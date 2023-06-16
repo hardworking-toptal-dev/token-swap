@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { INPUT_COLOR, MAIN_COMPONENT_COLOR, MAIN_TEXT_COLOR } from "../colors";
 import SwapBox from "./SwapBox";
-import MainButton from "./Button";
-import { useEffect, useRef, useState } from "react";
+import MainButton from "./MainButton";
+import { useEffect, useState } from "react";
 import { token } from "../types";
+import { TokenTypes, getPrice } from "../scripts/swap";
 
 export default function TradingBox(props: {
   className?: string;
@@ -24,12 +25,12 @@ export default function TradingBox(props: {
   const [sellToken, setSellToken] = useState(nullToken);
   const [buyTokenText, setBuyTokenText] = useState("BUY TOKEN");
   const [sellTokenText, setSellTokenText] = useState("SELL TOKEN");
+  const [sellTokenAmount, setSellTokenAmount] = useState(0);
+  const [buyTokenAmount, setBuyTokenAmount] = useState(0);
 
   useEffect(() => {
     fetch(props.tokenListURL)
-      .then((result) => {
-        return result.json();
-      })
+      .then((result) => result.json())
       .then((data: { tokens: token[] }) => {
         setTokens(
           data.tokens.filter((token) => {
@@ -44,6 +45,38 @@ export default function TradingBox(props: {
     if (sellToken.symbol) setSellTokenText(sellToken.symbol);
   }, [buyToken, sellToken]);
 
+  useEffect(() => {
+    async function parsePromise() {
+      const priceObj = await getPrice(
+        TokenTypes.buy,
+        buyToken.address,
+        sellToken.address,
+        sellToken.decimals,
+        buyToken.decimals,
+        buyTokenAmount
+      );
+      setSellTokenAmount(priceObj?.price as number);
+    }
+    parsePromise();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buyTokenAmount]);
+
+  useEffect(() => {
+    async function parsePromise() {
+      const priceObj = await getPrice(
+        TokenTypes.sell,
+        buyToken.address,
+        sellToken.address,
+        sellToken.decimals,
+        buyToken.decimals,
+        sellTokenAmount
+      );
+      setBuyTokenAmount(priceObj?.price as number);
+    }
+    parsePromise();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sellTokenAmount]);
+
   return (
     <Wrapper className={props.className + " rounded-3"}>
       <SwapBoxes>
@@ -51,11 +84,15 @@ export default function TradingBox(props: {
           setSelectedToken={setBuyToken}
           buttonText={buyTokenText}
           tokens={tokens}
+          setTokenAmount={setBuyTokenAmount}
+          tokenAmount={buyTokenAmount}
         />
         <SwapBox
           setSelectedToken={setSellToken}
           buttonText={sellTokenText}
           tokens={tokens}
+          setTokenAmount={setSellTokenAmount}
+          tokenAmount={sellTokenAmount}
         />
       </SwapBoxes>
       <GasWrapper>
