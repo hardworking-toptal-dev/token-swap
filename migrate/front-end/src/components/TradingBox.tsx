@@ -29,6 +29,7 @@ export default function TradingBox(props: {
   const [sellTokenAmount, setSellTokenAmount] = useState(0);
   const [buyTokenPrice, setBuyTokenPrice] = useState(0);
   const [sellTokenPrice, setSellTokenPrice] = useState(0);
+  const [gasPrice, setGasPrice] = useState(0);
 
   useEffect(() => {
     fetch(props.tokenListURL)
@@ -58,10 +59,17 @@ export default function TradingBox(props: {
         buyTokenAmount
       );
       setSellTokenPrice(priceObj?.price as number);
+      if (priceObj?.gasEstimate) setGasPrice(priceObj?.gasEstimate);
+      else setGasPrice(0);
     }
     parsePromise();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buyTokenAmount]);
+  }, [
+    buyToken.address,
+    buyToken.decimals,
+    buyTokenAmount,
+    sellToken.address,
+    sellToken.decimals,
+  ]);
 
   useEffect(() => {
     async function parsePromise() {
@@ -74,10 +82,17 @@ export default function TradingBox(props: {
         sellTokenAmount
       );
       setBuyTokenPrice(priceObj?.price as number);
+      if (priceObj?.gasEstimate) setGasPrice(priceObj?.gasEstimate);
+      else setGasPrice(0);
     }
     parsePromise();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sellTokenAmount]);
+  }, [
+    buyToken.address,
+    buyToken.decimals,
+    sellToken.address,
+    sellToken.decimals,
+    sellTokenAmount,
+  ]);
 
   return (
     <Wrapper className={props.className + " rounded-3"}>
@@ -100,7 +115,7 @@ export default function TradingBox(props: {
       <GasWrapper>
         <Gas className="rounded-2">
           <p>GAS</p>
-          <p style={{ color: MAIN_TEXT_COLOR }}>1000</p>
+          <p style={{ color: MAIN_TEXT_COLOR }}>{gasPrice}</p>
         </Gas>
       </GasWrapper>
       <SwapWrapper>

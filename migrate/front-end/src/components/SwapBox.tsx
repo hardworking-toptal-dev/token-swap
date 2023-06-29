@@ -33,10 +33,6 @@ export default function SwapBox(props: {
     }
   }, [props.tokenPrice]);
 
-  function onClick() {
-    setModalShown({ show: true });
-  }
-
   return (
     <InputWrapper className="mb-3" size="sm" borderRadius="30px">
       <TokenModal
@@ -45,7 +41,7 @@ export default function SwapBox(props: {
         tokens={props.tokens}
       />
       <MainButton
-        onClick={onClick}
+        onClick={() => setModalShown({ show: true })}
         className=""
         width="30%"
         text={props.buttonText}
