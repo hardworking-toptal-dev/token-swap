@@ -4,3 +4,4 @@ mainsite/mainsite/__pycache__/secretkey.cpython-39.pyc
 mainsite/db.sqlite3
 *.sqlite3
 mainsite/db.sqlite3
+migrate/front-end/.prettierrc

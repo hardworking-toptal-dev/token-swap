@@ -114,8 +114,8 @@ export default function TradingBox(props: {
       </SwapBoxes>
       <GasWrapper>
         <Gas className="rounded-2">
-          <p>GAS</p>
-          <p style={{ color: MAIN_TEXT_COLOR }}>{gasPrice}</p>
+          <GasText>GAS</GasText>
+          <GasText style={{ color: MAIN_TEXT_COLOR }}>{gasPrice}</GasText>
         </Gas>
       </GasWrapper>
       <SwapWrapper>
@@ -150,6 +150,7 @@ const GasWrapper = styled.div`
   display: flex;
   height: 10%;
   flex-direction: row-reverse;
+  background-color: black;
 `;
 const Gas = styled.span`
   width: 30%;
@@ -159,6 +160,10 @@ const Gas = styled.span`
   display: flex;
   justify-content: space-between;
   padding: 5px;
+`;
+const GasText = styled.p`
+  margin-top: auto;
+  margin-bottom: auto;
 `;
 const SwapWrapper = styled.div`
   height: 30%;
