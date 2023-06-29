@@ -1,5 +1,4 @@
-import { SyntheticEvent, useEffect, useMemo, useState } from "react";
-import Button from "react-bootstrap/Button";
+import { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { token } from "../types";
 import { Form, InputGroup, ListGroup, ListGroupItem } from "react-bootstrap";
@@ -11,7 +10,6 @@ import {
   MAIN_COMPONENT_COLOR,
   MAIN_TEXT_COLOR,
 } from "../colors";
-import { Token } from "@mui/icons-material";
 
 export default function TokenModal(props: {
   shown: { show: boolean };
@@ -58,7 +56,7 @@ export default function TokenModal(props: {
       <Header closeButton={true}>
         <Modal.Title>TOKENS</Modal.Title>
         <InputGroup>
-          <Search onChange={onSearchChange} placeHolder="Search"></Search>
+          <Search onChange={onSearchChange} placeholder="Search"></Search>
         </InputGroup>
       </Header>
       <Body>

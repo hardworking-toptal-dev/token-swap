@@ -11,20 +11,32 @@ export default function SwapBox(props: {
   tokens: token[];
   setSelectedToken: Function;
   setTokenAmount: Function;
-  tokenAmount: number;
+  tokenPrice: Number;
 }) {
   const [modalShown, setModalShown] = useState({ show: false });
-  const [amountText, setAmountText] = useState("");
+  const [amountInput, setAmountInput] = useState("");
+  const [pricePlaceholder, setPricePlaceholder] = useState("");
+
+  useEffect(() => {
+    const timeOutId = setTimeout(() => {
+      props.setTokenAmount(Number.parseFloat(amountInput));
+    }, 500);
+    return () => clearTimeout(timeOutId);
+  }, [amountInput, props]);
+
+  useEffect(() => {
+    if (props.tokenPrice) {
+      setAmountInput("");
+      setPricePlaceholder(props.tokenPrice.toString());
+    } else {
+      setPricePlaceholder("");
+    }
+  }, [props.tokenPrice]);
 
   function onClick() {
     setModalShown({ show: true });
   }
-  function handleOnChange(params: BaseSyntheticEvent) {
-    props.setTokenAmount(Number.parseFloat(params.target.value));
-  }
-  useEffect(() => {
-    if (props.tokenAmount) setAmountText(props.tokenAmount.toString());
-  }, [props.tokenAmount]);
+
   return (
     <InputWrapper className="mb-3" size="sm" borderRadius="30px">
       <TokenModal
@@ -38,7 +50,18 @@ export default function SwapBox(props: {
         width="30%"
         text={props.buttonText}
       ></MainButton>
-      <SwapForm width={"90px"} onChange={handleOnChange} value={amountText} />
+      <SwapForm
+        // type="number"
+        pattern="[0-9]*"
+        width={"90px"}
+        onChange={(event: BaseSyntheticEvent) => {
+          const re = /^[0-9\b]+$/;
+          if (event.target.value === "" || re.test(event.target.value))
+            setAmountInput(event.target.value);
+        }}
+        placeholder={pricePlaceholder}
+        value={amountInput}
+      />
     </InputWrapper>
   );
 }

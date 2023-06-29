@@ -39,15 +39,10 @@ export async function getPrice(
   amount: number
 ) {
   if (buyToken && sellToken) {
-    // const Http = new XMLHttpRequest();
     let url = "https://api.0x.org/swap/v1/price/";
-    // if (debug) {
-    //   url = "https://mumbai.api.0x.org/swap/v1/price/";
-    // }
     const params =
       "buyToken=" + buyToken + "&sellToken=" + sellToken + "&" + buyOrSell;
 
-    //console.log(Http.responseText["price"]);
     if (buyOrSell === TokenTypes.sell) {
       return fetch(
         url +

@@ -25,8 +25,10 @@ export default function TradingBox(props: {
   const [sellToken, setSellToken] = useState(nullToken);
   const [buyTokenText, setBuyTokenText] = useState("BUY TOKEN");
   const [sellTokenText, setSellTokenText] = useState("SELL TOKEN");
-  const [sellTokenAmount, setSellTokenAmount] = useState(0);
   const [buyTokenAmount, setBuyTokenAmount] = useState(0);
+  const [sellTokenAmount, setSellTokenAmount] = useState(0);
+  const [buyTokenPrice, setBuyTokenPrice] = useState(0);
+  const [sellTokenPrice, setSellTokenPrice] = useState(0);
 
   useEffect(() => {
     fetch(props.tokenListURL)
@@ -55,7 +57,7 @@ export default function TradingBox(props: {
         buyToken.decimals,
         buyTokenAmount
       );
-      setSellTokenAmount(priceObj?.price as number);
+      setSellTokenPrice(priceObj?.price as number);
     }
     parsePromise();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,7 +73,7 @@ export default function TradingBox(props: {
         buyToken.decimals,
         sellTokenAmount
       );
-      setBuyTokenAmount(priceObj?.price as number);
+      setBuyTokenPrice(priceObj?.price as number);
     }
     parsePromise();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -85,14 +87,14 @@ export default function TradingBox(props: {
           buttonText={buyTokenText}
           tokens={tokens}
           setTokenAmount={setBuyTokenAmount}
-          tokenAmount={buyTokenAmount}
+          tokenPrice={buyTokenPrice}
         />
         <SwapBox
           setSelectedToken={setSellToken}
           buttonText={sellTokenText}
           tokens={tokens}
           setTokenAmount={setSellTokenAmount}
-          tokenAmount={sellTokenAmount}
+          tokenPrice={sellTokenPrice}
         />
       </SwapBoxes>
       <GasWrapper>
