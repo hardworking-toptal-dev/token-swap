@@ -150,7 +150,6 @@ const GasWrapper = styled.div`
   display: flex;
   height: 10%;
   flex-direction: row-reverse;
-  background-color: black;
 `;
 const Gas = styled.span`
   width: 30%;
