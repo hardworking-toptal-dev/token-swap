@@ -60,7 +60,7 @@ export default function TradingBox(props: {
       );
       setSellTokenPrice(priceObj?.price as number);
       if (priceObj?.gasEstimate) setGasPrice(priceObj?.gasEstimate);
-      else setGasPrice(0);
+      else if (!buyTokenAmount && !sellTokenAmount) setGasPrice(0);
     }
     parsePromise();
   }, [
@@ -69,6 +69,7 @@ export default function TradingBox(props: {
     buyTokenAmount,
     sellToken.address,
     sellToken.decimals,
+    sellTokenAmount,
   ]);
 
   useEffect(() => {
@@ -83,12 +84,13 @@ export default function TradingBox(props: {
       );
       setBuyTokenPrice(priceObj?.price as number);
       if (priceObj?.gasEstimate) setGasPrice(priceObj?.gasEstimate);
-      else setGasPrice(0);
+      else if (!buyTokenAmount && !sellTokenAmount) setGasPrice(0);
     }
     parsePromise();
   }, [
     buyToken.address,
     buyToken.decimals,
+    buyTokenAmount,
     sellToken.address,
     sellToken.decimals,
     sellTokenAmount,
