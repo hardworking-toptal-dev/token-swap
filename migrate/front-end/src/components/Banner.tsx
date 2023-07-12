@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { BANNER_COLOR, MAIN_TEXT_COLOR } from "../colors";
+import { BANNER_COLOR, MAIN_TEXT_COLOR } from "../constants/colors";
 import MainButton from "./MainButton";
 import { getAccount, isConnected } from "../scripts/swap";
 

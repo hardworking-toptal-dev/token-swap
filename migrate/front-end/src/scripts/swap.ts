@@ -1,4 +1,5 @@
 import MetaMaskSDK from "@metamask/sdk";
+import { API_KEY } from "../constants/0x_api_key";
 
 export enum TokenTypes {
   buy = "buy",
@@ -42,6 +43,7 @@ export async function getPrice(
     let url = "https://api.0x.org/swap/v1/price/";
     const params =
       "buyToken=" + buyToken + "&sellToken=" + sellToken + "&" + buyOrSell;
+    const headers = { "0x-api-key": API_KEY };
 
     if (buyOrSell === TokenTypes.sell) {
       return fetch(
@@ -49,7 +51,8 @@ export async function getPrice(
           "?" +
           params +
           "Amount=" +
-          ensureNotation(amount * 10 ** sellDecimals)
+          ensureNotation(amount * 10 ** sellDecimals),
+        { headers }
       )
         .then((result) => {
           return result.json();

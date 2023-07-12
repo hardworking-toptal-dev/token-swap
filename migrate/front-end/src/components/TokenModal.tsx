@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import { token } from "../types";
+import { token } from "../constants/types";
 import { Form, InputGroup, ListGroup, ListGroupItem } from "react-bootstrap";
 import styled from "styled-components";
 import {
@@ -9,7 +9,7 @@ import {
   MAIN_COLOR_ON_HOVER,
   MAIN_COMPONENT_COLOR,
   MAIN_TEXT_COLOR,
-} from "../colors";
+} from "../constants/colors";
 
 export default function TokenModal(props: {
   shown: { show: boolean };

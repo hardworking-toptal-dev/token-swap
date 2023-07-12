@@ -1,9 +1,13 @@
 import styled from "styled-components";
-import { INPUT_COLOR, MAIN_COMPONENT_COLOR, MAIN_TEXT_COLOR } from "../colors";
+import {
+  INPUT_COLOR,
+  MAIN_COMPONENT_COLOR,
+  MAIN_TEXT_COLOR,
+} from "../constants/colors";
 import SwapBox from "./SwapBox";
 import MainButton from "./MainButton";
 import { useEffect, useState } from "react";
-import { token } from "../types";
+import { token } from "../constants/types";
 import { TokenTypes, getPrice } from "../scripts/swap";
 
 export default function TradingBox(props: {

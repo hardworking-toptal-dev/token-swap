@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import TradingBox from "./components/TradingBox";
-import ChatBox from "./components/ChatBox";
-import Example from "./components/TrendsTable";
-import Banner from "./components/Banner";
+import TradingBox from "../components/TradingBox";
+import ChatBox from "../components/ChatBox";
+import TrendsTable from "../components/TrendsTable";
+import Banner from "../components/Banner";
 
 export function Landing() {
   return (
@@ -11,7 +11,7 @@ export function Landing() {
       <ChatAndContentWrapper>
         <ContentWrapper>
           <LandingTradingBox tokenListURL="https://tokens.coingecko.com/uniswap/all.json" />
-          <Example />
+          <TrendsTable width="50vw" height="100%" />
         </ContentWrapper>
         <ChatBox />
       </ChatAndContentWrapper>
@@ -38,7 +38,6 @@ const ContentWrapper = styled.div`
   width: 100%;
   justify-content: flex-start;
   align-items: center;
-  /* background-color: black; */
   margin-top: 3%;
 `;
 const LandingTradingBox = styled(TradingBox)`

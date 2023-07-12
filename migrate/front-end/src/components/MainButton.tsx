@@ -1,5 +1,9 @@
 import styled from "styled-components";
-import { MAIN_COLOR, MAIN_COLOR_ON_HOVER, MAIN_TEXT_COLOR } from "../colors";
+import {
+  MAIN_COLOR,
+  MAIN_COLOR_ON_HOVER,
+  MAIN_TEXT_COLOR,
+} from "../constants/colors";
 import { Button } from "react-bootstrap";
 
 export default function MainButton(props: {

@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import { INPUT_COLOR } from "../colors";
+import { INPUT_COLOR } from "../constants/colors";
 import MainButton from "./MainButton";
 import { Form, InputGroup } from "react-bootstrap";
-import { token } from "../types";
+import { token } from "../constants/types";
 import TokenModal from "./TokenModal";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
 

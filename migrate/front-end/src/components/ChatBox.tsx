@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { INPUT_COLOR, MAIN_COMPONENT_COLOR } from "../colors";
+import { INPUT_COLOR, MAIN_COMPONENT_COLOR } from "../constants/colors";
 import { Form, InputGroup } from "react-bootstrap";
 import MainButton from "./MainButton";
 
