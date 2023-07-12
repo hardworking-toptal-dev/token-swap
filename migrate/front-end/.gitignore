@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+.prettierrc
+/src/constants/0x_api_key.ts
