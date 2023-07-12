@@ -1,5 +1,6 @@
 import MetaMaskSDK from "@metamask/sdk";
 import { API_KEY } from "../constants/0x_api_key";
+import "@openzeppelin/contracts/token/ERC20/";
 
 export enum TokenTypes {
   buy = "buy",
@@ -70,7 +71,8 @@ export async function getPrice(
           "?" +
           params +
           "Amount=" +
-          ensureNotation(amount * 10 ** buyDecimals)
+          ensureNotation(amount * 10 ** buyDecimals),
+        { headers }
       )
         .then((result) => {
           return result.json();
@@ -83,6 +85,10 @@ export async function getPrice(
         });
     }
   }
+}
+
+export async function allowanceTest() {
+  allowanceTest;
 }
 
 function ensureNotation(number: Number) {

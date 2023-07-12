@@ -5,3 +5,4 @@ mainsite/db.sqlite3
 *.sqlite3
 mainsite/db.sqlite3
 migrate/front-end/.prettierrc
+.prettierrc
