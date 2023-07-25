@@ -8,7 +8,7 @@ import SwapBox from "./SwapBox";
 import MainButton from "./MainButton";
 import { useEffect, useState } from "react";
 import { token } from "../constants/types";
-import { TokenTypes, getPrice } from "../scripts/swap";
+import { TokenTypes, getPrice, approve, getAllowance } from "../scripts/swap";
 
 export default function TradingBox(props: {
   className?: string;
@@ -34,6 +34,8 @@ export default function TradingBox(props: {
   const [buyTokenPrice, setBuyTokenPrice] = useState(0);
   const [sellTokenPrice, setSellTokenPrice] = useState(0);
   const [gasPrice, setGasPrice] = useState(0);
+
+  // testApproval();
 
   useEffect(() => {
     fetch(props.tokenListURL)
@@ -125,14 +127,41 @@ export default function TradingBox(props: {
         </Gas>
       </GasWrapper>
       <SwapWrapper>
-        <MainButton
+        {/* <MainButton
           onClick={() => null}
           className="rounded-3"
           width="30%"
           text="SWAP"
+        /> */}
+        <SwapButton
+          buyTokenAddress={buyToken.address}
+          amount={buyTokenAmount}
         />
       </SwapWrapper>
     </Wrapper>
+  );
+}
+
+function SwapButton(props: { buyTokenAddress: string; amount: number }) {
+  const [buttonText, setButtonText] = useState("SWAP");
+
+  useEffect(() => {
+    if (props.buyTokenAddress)
+      (async () => {
+        const allowance = await getAllowance(props.buyTokenAddress);
+        if (allowance < props.amount) setButtonText("APPROVE");
+        else setButtonText("SWAP");
+      })();
+  }, [props.amount, props.buyTokenAddress]);
+
+  return (
+    <MainButton
+      text={buttonText}
+      width={"30%"}
+      onClick={() => {
+        approve(props.buyTokenAddress);
+      }}
+    />
   );
 }
 
