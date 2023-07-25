@@ -9,6 +9,7 @@ export enum TokenTypes {
 
 const MMSDK = new MetaMaskSDK();
 const ethereum = MMSDK.getProvider();
+const web3 = new Web3(ethereum);
 const ZeroXSpenderAddress = "0xdef1c0ded9bec7f1a1670819833240f027b25eff";
 const abi = [
   {
@@ -258,28 +259,30 @@ export async function getPrice(
 }
 
 export async function approve(buyTokenAddress: string) {
-  const address = ((await getAccount()) as string[])[0];
-  const web3 = new Web3(ethereum);
-  const Contract = new web3.eth.Contract(abi, buyTokenAddress);
-  Contract.methods
-    // @ts-ignore
-    .approve(ZeroXSpenderAddress, "1")
-    .send({
-      from: address,
-    });
+  if (await isConnected()) {
+    const address = ((await getAccount()) as string[])[0];
+    const Contract = new web3.eth.Contract(abi, buyTokenAddress);
+    Contract.methods
+      // @ts-ignore
+      .approve(ZeroXSpenderAddress, "1")
+      .send({
+        from: address,
+      });
+  }
 }
 
 export async function getAllowance(buyTokenAddress: string) {
-  const address = ((await getAccount()) as string[])[0];
-  const web3 = new Web3(ethereum);
-  const Contract = new web3.eth.Contract(abi, buyTokenAddress);
+  if (await isConnected()) {
+    const address = ((await getAccount()) as string[])[0];
+    const Contract = new web3.eth.Contract(abi, buyTokenAddress);
 
-  return parseInt(
-    await Contract.methods
-      // @ts-ignore
-      .allowance(address, ZeroXSpenderAddress)
-      .call({ from: address })
-  );
+    return parseInt(
+      await Contract.methods
+        // @ts-ignore
+        .allowance(address, ZeroXSpenderAddress)
+        .call({ from: address })
+    );
+  }
 }
 
 function ensureNotation(number: Number) {

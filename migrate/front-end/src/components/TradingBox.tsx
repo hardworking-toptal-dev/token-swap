@@ -8,8 +8,15 @@ import SwapBox from "./SwapBox";
 import MainButton from "./MainButton";
 import { useEffect, useState } from "react";
 import { token } from "../constants/types";
-import { TokenTypes, getPrice, approve, getAllowance } from "../scripts/swap";
-
+import {
+  TokenTypes,
+  getPrice,
+  approve,
+  getAllowance,
+  isConnected,
+} from "../scripts/swap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGasPump, faRightLeft } from "@fortawesome/free-solid-svg-icons";
 export default function TradingBox(props: {
   className?: string;
   tokenListURL: string;
@@ -112,6 +119,7 @@ export default function TradingBox(props: {
           setTokenAmount={setBuyTokenAmount}
           tokenPrice={buyTokenPrice}
         />
+        <SwapIcon icon={faRightLeft} rotation={90} />
         <SwapBox
           setSelectedToken={setSellToken}
           buttonText={sellTokenText}
@@ -122,46 +130,54 @@ export default function TradingBox(props: {
       </SwapBoxes>
       <GasWrapper>
         <Gas className="rounded-2">
-          <GasText>GAS</GasText>
+          {/* <GasText>GAS</GasText>
+           */}
+          <FontAwesomeIcon icon={faGasPump} />
           <GasText style={{ color: MAIN_TEXT_COLOR }}>{gasPrice}</GasText>
         </Gas>
       </GasWrapper>
       <SwapWrapper>
-        {/* <MainButton
-          onClick={() => null}
-          className="rounded-3"
-          width="30%"
-          text="SWAP"
-        /> */}
         <SwapButton
           buyTokenAddress={buyToken.address}
-          amount={buyTokenAmount}
+          buyAmount={buyTokenAmount}
         />
       </SwapWrapper>
     </Wrapper>
   );
 }
 
-function SwapButton(props: { buyTokenAddress: string; amount: number }) {
+function SwapButton(props: { buyTokenAddress: string; buyAmount: number }) {
   const [buttonText, setButtonText] = useState("SWAP");
+  const [disabled, setDisabled] = useState(true);
 
   useEffect(() => {
-    if (props.buyTokenAddress)
+    if (props.buyTokenAddress) {
       (async () => {
         const allowance = await getAllowance(props.buyTokenAddress);
-        if (allowance < props.amount) setButtonText("APPROVE");
-        else setButtonText("SWAP");
+        if ((allowance as number) < props.buyAmount) {
+          setButtonText("APPROVE");
+          setDisabled(false);
+        } else {
+          setButtonText("SWAP");
+          if (!props.buyAmount || !(await isConnected())) {
+            setDisabled(true);
+          } else setDisabled(false);
+        }
       })();
-  }, [props.amount, props.buyTokenAddress]);
+    }
+  }, [props.buyAmount, props.buyTokenAddress]);
 
   return (
-    <MainButton
-      text={buttonText}
-      width={"30%"}
-      onClick={() => {
-        approve(props.buyTokenAddress);
-      }}
-    />
+    <>
+      <MainButton
+        text={buttonText}
+        width={"30%"}
+        onClick={() => {
+          approve(props.buyTokenAddress);
+        }}
+        disabled={disabled}
+      />
+    </>
   );
 }
 
@@ -193,6 +209,7 @@ const Gas = styled.span`
   margin-right: 5%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 5px;
 `;
 const GasText = styled.p`
@@ -204,4 +221,10 @@ const SwapWrapper = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-around;
+`;
+
+const SwapIcon = styled(FontAwesomeIcon)`
+  color: ${MAIN_TEXT_COLOR};
+  width: 30px;
+  height: 30px;
 `;

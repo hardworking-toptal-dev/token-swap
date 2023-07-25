@@ -2,18 +2,17 @@ import styled from "styled-components";
 import { INPUT_COLOR, MAIN_COMPONENT_COLOR } from "../constants/colors";
 import { Form, InputGroup } from "react-bootstrap";
 import MainButton from "./MainButton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 export default function ChatBox() {
   return (
     <Wrapper className="rounded-3">
       <InputGroup>
         <ChatInput></ChatInput>
-        <MainButton
-          onClick={() => null}
-          className=""
-          width=""
-          text="Enter"
-        ></MainButton>
+        <MainButton onClick={() => null}>
+          <FontAwesomeIcon icon={faRightToBracket} />
+        </MainButton>
       </InputGroup>
     </Wrapper>
   );

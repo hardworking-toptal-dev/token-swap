@@ -34,7 +34,9 @@ export default function TokenModal(props: {
 
   function TokenList(props: { searchValue: string; tokens: token[] }) {
     const searchedTokens = tokens.filter(
-      (token) => token.name.search(new RegExp(searchValue, "i")) !== -1
+      (token) =>
+        token.name.search(new RegExp(searchValue, "i")) !== -1 ||
+        token.symbol.search(new RegExp(searchValue, "i")) !== -1
     );
 
     const tokenElements = searchedTokens.map((token) => (

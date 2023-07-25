@@ -10,7 +10,7 @@ export function Landing() {
       <Banner />
       <ChatAndContentWrapper>
         <ContentWrapper>
-          <LandingTradingBox tokenListURL="https://tokens.coingecko.com/uniswap/all.json" />
+          <LandingTradingBox tokenListURL="https://wispy-bird-88a7.uniswap.workers.dev/?url=http://tokens.1inch.eth.link" />
           <TrendsTable width="50vw" height="100%" />
         </ContentWrapper>
         <ChatBox />

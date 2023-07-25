@@ -34,7 +34,7 @@ export default function SwapBox(props: {
   }, [props.tokenPrice]);
 
   return (
-    <InputWrapper className="mb-3" size="sm" borderRadius="30px">
+    <InputWrapper size="sm" borderRadius="30px">
       <TokenModal
         setSelectedToken={props.setSelectedToken}
         shown={modalShown}
