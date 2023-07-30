@@ -8,7 +8,7 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <React.StrictMode>
-    <Landing />
-  </React.StrictMode>
+  // <React.StrictMode>
+  <Landing />
+  // </React.StrictMode>
 );

@@ -14,9 +14,13 @@ import {
   approve,
   getAllowance,
   isConnected,
+  swap,
 } from "../scripts/swap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGasPump, faRightLeft } from "@fortawesome/free-solid-svg-icons";
+
+const ETH_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+
 export default function TradingBox(props: {
   className?: string;
   tokenListURL: string;
@@ -48,11 +52,19 @@ export default function TradingBox(props: {
     fetch(props.tokenListURL)
       .then((result) => result.json())
       .then((data: { tokens: token[] }) => {
-        setTokens(
-          data.tokens.filter((token) => {
-            return token.chainId === 1;
-          })
-        );
+        const tokensData = data.tokens.filter((token) => {
+          return token.chainId === 1;
+        });
+        tokensData.push({
+          address: ETH_ADDRESS,
+          chainId: 1,
+          decimals: 18,
+          extensions: undefined,
+          logoURI: "",
+          name: "Ethereum",
+          symbol: "ETH",
+        });
+        setTokens(tokensData);
       });
   }, [props.tokenListURL]);
 
@@ -139,31 +151,60 @@ export default function TradingBox(props: {
       <SwapWrapper>
         <SwapButton
           buyTokenAddress={buyToken.address}
-          buyAmount={buyTokenAmount}
+          buyAmount={buyTokenAmount ? buyTokenAmount : buyTokenPrice}
+          sellTokenAddress={sellToken.address}
+          // sellAmount={sellTokenAmount ? sellTokenAmount : sellTokenPrice}
+          buyDecimals={buyToken.decimals}
         />
       </SwapWrapper>
     </Wrapper>
   );
 }
 
-function SwapButton(props: { buyTokenAddress: string; buyAmount: number }) {
+function SwapButton(props: {
+  buyTokenAddress: string;
+  sellTokenAddress: string;
+  // sellAmount: number;
+  buyDecimals: number;
+  buyAmount: number;
+}) {
   const [buttonText, setButtonText] = useState("SWAP");
   const [disabled, setDisabled] = useState(true);
 
+  const approveOnClick = () => {
+    approve(props.buyTokenAddress);
+  };
+  const swapOnClick = () => {
+    swap(
+      props.buyTokenAddress,
+      props.sellTokenAddress,
+      props.buyAmount,
+      props.buyDecimals
+    );
+  };
+
+  const [onClick, setOnClick] = useState({ function: approveOnClick });
+
   useEffect(() => {
-    if (props.buyTokenAddress) {
+    if (props.buyTokenAddress && props.buyTokenAddress !== ETH_ADDRESS) {
       (async () => {
         const allowance = await getAllowance(props.buyTokenAddress);
         if ((allowance as number) < props.buyAmount) {
           setButtonText("APPROVE");
+          setOnClick({ function: approveOnClick });
           setDisabled(false);
         } else {
           setButtonText("SWAP");
           if (!props.buyAmount || !(await isConnected())) {
             setDisabled(true);
           } else setDisabled(false);
+          setOnClick({ function: swapOnClick });
         }
       })();
+    } else if (props.buyTokenAddress === ETH_ADDRESS) {
+      setDisabled(false);
+      setButtonText("SWAP");
+      setOnClick({ function: swapOnClick });
     }
   }, [props.buyAmount, props.buyTokenAddress]);
 
@@ -172,9 +213,7 @@ function SwapButton(props: { buyTokenAddress: string; buyAmount: number }) {
       <MainButton
         text={buttonText}
         width={"30%"}
-        onClick={() => {
-          approve(props.buyTokenAddress);
-        }}
+        onClick={onClick.function}
         disabled={disabled}
       />
     </>

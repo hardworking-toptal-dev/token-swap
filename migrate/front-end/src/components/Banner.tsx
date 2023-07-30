@@ -6,7 +6,9 @@ import { getAccount, isConnected } from "../scripts/swap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWallet } from "@fortawesome/free-solid-svg-icons";
 
-export default function Banner() {
+export default function Banner(
+  props: { setAddress: Function } /* For testing chat server */
+) {
   const [account, setAccount] = useState("");
   const [loginText, setLoginText] = useState("Login");
   const [walletIcon, setWalletIcon] = useState(<WalletIcon icon={faWallet} />);
@@ -27,6 +29,8 @@ export default function Banner() {
       setWalletIcon(<></>);
     }
   }, [account]);
+
+  props.setAddress(account);
 
   return (
     <Wrapper>

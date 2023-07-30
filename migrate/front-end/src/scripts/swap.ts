@@ -212,7 +212,7 @@ export async function getPrice(
   amount: number
 ) {
   if (buyToken && sellToken) {
-    let url = "https://api.0x.org/swap/v1/price/";
+    const url = "https://api.0x.org/swap/v1/price/";
     const params =
       "buyToken=" + buyToken + "&sellToken=" + sellToken + "&" + buyOrSell;
     const headers = { "0x-api-key": API_KEY };
@@ -256,6 +256,32 @@ export async function getPrice(
         });
     }
   }
+}
+
+export async function swap(
+  buyToken: string,
+  sellToken: string,
+  buyAmount: number,
+  buyDecimals: number
+) {
+  const url = "https://api.0x.org/swap/v1/quote/";
+  const params =
+    "buyToken=" +
+    sellToken +
+    "&sellToken=" +
+    buyToken +
+    "&sellAmount=" +
+    ensureNotation(buyAmount * 10 ** buyDecimals) +
+    "&takerAddress=" +
+    ((await getAccount()) as string[])[0];
+  const headers = { "0x-api-key": API_KEY };
+
+  const quote = await fetch(url + "?" + params, { headers }).then((result) => {
+    return result.json();
+  });
+  console.log(buyDecimals);
+
+  const receipt = await web3.eth.sendTransaction(quote);
 }
 
 export async function approve(buyTokenAddress: string) {

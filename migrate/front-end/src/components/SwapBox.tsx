@@ -47,11 +47,9 @@ export default function SwapBox(props: {
         text={props.buttonText}
       ></MainButton>
       <SwapForm
-        // type="number"
-        pattern="[0-9]*"
         width={"90px"}
         onChange={(event: BaseSyntheticEvent) => {
-          const re = /^[0-9\b]+$/;
+          const re = /^[0-9.\b]+$/;
           if (event.target.value === "" || re.test(event.target.value))
             setAmountInput(event.target.value);
         }}

@@ -3,17 +3,20 @@ import TradingBox from "../components/TradingBox";
 import ChatBox from "../components/ChatBox";
 import TrendsTable from "../components/TrendsTable";
 import Banner from "../components/Banner";
+import { useState } from "react";
 
 export function Landing() {
+  const [address, setAddress] = useState("undefined"); //for testing chatserver
+
   return (
     <Wrapper>
-      <Banner />
+      <Banner setAddress={setAddress} />
       <ChatAndContentWrapper>
         <ContentWrapper>
           <LandingTradingBox tokenListURL="https://wispy-bird-88a7.uniswap.workers.dev/?url=http://tokens.1inch.eth.link" />
           <TrendsTable width="50vw" height="100%" />
         </ContentWrapper>
-        <ChatBox />
+        <ChatBox username={address} />
       </ChatAndContentWrapper>
     </Wrapper>
   );
