@@ -282,6 +282,7 @@ export async function swap(
   console.log(buyDecimals);
 
   const receipt = await web3.eth.sendTransaction(quote);
+  console.log(receipt);
 }
 
 export async function approve(buyTokenAddress: string) {

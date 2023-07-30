@@ -8,6 +8,7 @@ console.log("Server is listening on port: %d", port);
 
 io.of("/").on("connect", (socket) => {
   console.log("\nA client connected");
+  console.log("Number of clients: %d", io.of("/").server.engine.clientsCount);
 
   socket.on("disconnect", (reason) => {
     console.log("\nA client disconnected, reason: %s", reason);

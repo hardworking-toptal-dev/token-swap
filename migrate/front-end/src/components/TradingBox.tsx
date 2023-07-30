@@ -131,7 +131,15 @@ export default function TradingBox(props: {
           setTokenAmount={setBuyTokenAmount}
           tokenPrice={buyTokenPrice}
         />
-        <SwapIcon icon={faRightLeft} rotation={90} />
+        <MainButton
+          onClick={() => {
+            const ogBuyToken = buyToken;
+            setBuyToken(sellToken);
+            setSellToken(ogBuyToken);
+          }}
+        >
+          <SwapIcon icon={faRightLeft} rotation={90} />
+        </MainButton>
         <SwapBox
           setSelectedToken={setSellToken}
           buttonText={sellTokenText}
@@ -263,7 +271,7 @@ const SwapWrapper = styled.div`
 `;
 
 const SwapIcon = styled(FontAwesomeIcon)`
-  color: ${MAIN_TEXT_COLOR};
+  /* color: ${MAIN_TEXT_COLOR}; */
   width: 30px;
   height: 30px;
 `;

@@ -1,3 +1,6 @@
+//This script only allows for connection to the server and chatting within the terminal
+//using `node client.js`. Is only used for testing.
+
 const io = require("socket.io-client");
 const socket = io("http://localhost:4000");
 const prompt = require("prompt-sync")({ sigint: true });

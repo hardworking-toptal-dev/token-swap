@@ -11,3 +11,4 @@ export const MAIN_COMPONENT_COLOR = "#1D267D";
 export const INPUT_COLOR = "#D4ADFC";
 export const MAIN_TEXT_COLOR = "#5C469C";
 export const BANNER_COLOR = "#080c32";
+export const DISABLED_INPUT_COLOR = "#9B7DB9";
