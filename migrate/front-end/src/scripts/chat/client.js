@@ -1,10 +1,13 @@
 //This script only allows for connection to the server and chatting within the terminal
 //using `node client.js`. Is only used for testing.
 
-const io = require("socket.io-client");
+import io from "socket.io-client";
+import { createInterface } from "readline";
+import prompt from "prompt-sync";
+
 const socket = io("http://localhost:4000");
-const prompt = require("prompt-sync")({ sigint: true });
-const nickname = prompt("Username: ");
+const input = prompt({ sigint: true });
+const nickname = input("Username: ");
 
 console.log("Connecting to the server...");
 socket.on("connect", () => {
@@ -14,8 +17,7 @@ socket.on("disconnect", (reason) => {
   console.log("[INFO]: Client disconnected, reason: %s", reason);
 });
 
-const readline = require("readline");
-const rl = readline.createInterface({
+const rl = createInterface({
   input: process.stdin,
   output: process.stdout,
 });

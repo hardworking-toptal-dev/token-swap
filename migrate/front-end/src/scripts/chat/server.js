@@ -1,5 +1,7 @@
+import { Server } from "socket.io";
+
 const port = 4000;
-const io = require("socket.io")(4000, {
+const io = new Server(4000, {
   cors: {
     origin: "*",
   },

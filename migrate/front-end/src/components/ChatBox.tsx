@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { io } from "socket.io-client";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
+import { isConnected } from "../scripts/web3/swap";
 
 export default function ChatBox(props: { username: string }) {
   const [input, setInput] = useState("");
@@ -19,35 +20,45 @@ export default function ChatBox(props: { username: string }) {
   const [chats, setChats] = useState({ array: [] as JSX.Element[] });
   const [latestChat, setLatestChat] = useState(<></>);
   const [disabled, setDisabled] = useState(true);
+  const [walletConnected, setWalletConnected] = useState(false);
 
   useEffect(() => {
-    if (props.username) {
-      const connectSocket = io("http://localhost:4000");
-      console.log("Connecting to the server...");
-      connectSocket.on("connect", () => {
-        setDisabled(false);
-        console.log(`[INFO]: Welcome ${props.username}`);
-      });
-      connectSocket.on("disconnect", (reason: any) => {
-        setDisabled(true);
-        console.log("[INFO]: Client disconnected, reason: %s", reason);
-      });
+    (async () => {
+      if (props.username && (await isConnected())) {
+        setWalletConnected((await isConnected()) ? true : false);
+        const connectSocket = io("http://localhost:4000");
+        console.log("Connecting to the server...");
+        connectSocket.on("connect", () => {
+          setDisabled(false);
+          console.log(`[INFO]: Welcome ${props.username}`);
+        });
+        connectSocket.on("disconnect", (reason: any) => {
+          setDisabled(true);
+          console.log("[INFO]: Client disconnected, reason: %s", reason);
+        });
+        // (async () => {
+        //   if (!(await isConnected())) {
+        //     setDisabled(true);
+        //     console.log(!(await isConnected()));
+        //   }
+        // })();
 
-      socket.on("broadcast", (data) => {
-        console.log("%s: %s", data.sender, data.msg);
-        setLatestChat(
-          <IndividualChat
-            key={Math.random()}
-            user={data.sender}
-            msg={data.msg}
-          />
-        );
-        console.log(latestChat);
-      });
+        socket.on("broadcast", (data) => {
+          console.log("%s: %s", data.sender, data.msg);
+          setLatestChat(
+            <IndividualChat
+              key={Math.random()}
+              user={data.sender}
+              msg={data.msg}
+            />
+          );
+          console.log(latestChat);
+        });
 
-      setSocket(connectSocket);
-    }
-  }, [props.username]);
+        setSocket(connectSocket);
+      }
+    })();
+  }, [props.username, walletConnected]);
 
   useEffect(() => {
     setChats({
@@ -116,7 +127,9 @@ const ChatInput = styled(Form.Control)`
   background-color: ${INPUT_COLOR};
   &:disabled {
     background-color: ${DISABLED_INPUT_COLOR} !important;
+    border-color: ${DISABLED_INPUT_COLOR} !important;
   }
+  font-size: 12px;
 `;
 
 const IncomingChats = styled.div`
@@ -129,10 +142,10 @@ const IncomingChats = styled.div`
 `;
 
 const User = styled.span`
-  color: ${MAIN_COLOR};
+  color: ${MAIN_TEXT_COLOR};
   font-size: 13px;
 `;
 const Message = styled.span`
-  color: ${MAIN_TEXT_COLOR};
+  color: ${MAIN_COLOR};
   font-size: 13px;
 `;

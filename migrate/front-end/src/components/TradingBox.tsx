@@ -15,7 +15,8 @@ import {
   getAllowance,
   isConnected,
   swap,
-} from "../scripts/swap";
+  getTransaction,
+} from "../scripts/web3/swap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGasPump, faRightLeft } from "@fortawesome/free-solid-svg-icons";
 
@@ -34,19 +35,28 @@ export default function TradingBox(props: {
     name: "",
     symbol: "",
   };
+  const ethereumToken: token = {
+    address: ETH_ADDRESS,
+    chainId: 1,
+    decimals: 18,
+    extensions: undefined,
+    logoURI: "",
+    name: "Ethereum",
+    symbol: "ETH",
+  };
 
   const [tokens, setTokens] = useState([] as token[]);
-  const [buyToken, setBuyToken] = useState(nullToken);
+  const [buyToken, setBuyToken] = useState(ethereumToken);
   const [sellToken, setSellToken] = useState(nullToken);
-  const [buyTokenText, setBuyTokenText] = useState("BUY TOKEN");
-  const [sellTokenText, setSellTokenText] = useState("SELL TOKEN");
+  const [buyTokenText, setBuyTokenText] = useState("SELECT TOKEN");
+  const [sellTokenText, setSellTokenText] = useState("SELECT TOKEN");
   const [buyTokenAmount, setBuyTokenAmount] = useState(0);
   const [sellTokenAmount, setSellTokenAmount] = useState(0);
   const [buyTokenPrice, setBuyTokenPrice] = useState(0);
   const [sellTokenPrice, setSellTokenPrice] = useState(0);
   const [gasPrice, setGasPrice] = useState(0);
 
-  // testApproval();
+  getTransaction(); //testing
 
   useEffect(() => {
     fetch(props.tokenListURL)
@@ -55,15 +65,7 @@ export default function TradingBox(props: {
         const tokensData = data.tokens.filter((token) => {
           return token.chainId === 1;
         });
-        tokensData.push({
-          address: ETH_ADDRESS,
-          chainId: 1,
-          decimals: 18,
-          extensions: undefined,
-          logoURI: "",
-          name: "Ethereum",
-          symbol: "ETH",
-        });
+        tokensData.push(ethereumToken);
         setTokens(tokensData);
       });
   }, [props.tokenListURL]);
@@ -133,9 +135,14 @@ export default function TradingBox(props: {
         />
         <MainButton
           onClick={() => {
-            const ogBuyToken = buyToken;
-            setBuyToken(sellToken);
-            setSellToken(ogBuyToken);
+            if (
+              buyToken.address !== nullToken.address &&
+              sellToken.address !== nullToken.address
+            ) {
+              const ogBuyToken = buyToken;
+              setBuyToken(sellToken);
+              setSellToken(ogBuyToken);
+            }
           }}
         >
           <SwapIcon icon={faRightLeft} rotation={90} />
@@ -194,8 +201,8 @@ function SwapButton(props: {
   const [onClick, setOnClick] = useState({ function: approveOnClick });
 
   useEffect(() => {
-    if (props.buyTokenAddress && props.buyTokenAddress !== ETH_ADDRESS) {
-      (async () => {
+    (async () => {
+      if (props.buyTokenAddress && props.buyTokenAddress !== ETH_ADDRESS) {
         const allowance = await getAllowance(props.buyTokenAddress);
         if ((allowance as number) < props.buyAmount) {
           setButtonText("APPROVE");
@@ -208,12 +215,16 @@ function SwapButton(props: {
           } else setDisabled(false);
           setOnClick({ function: swapOnClick });
         }
-      })();
-    } else if (props.buyTokenAddress === ETH_ADDRESS) {
-      setDisabled(false);
-      setButtonText("SWAP");
-      setOnClick({ function: swapOnClick });
-    }
+      } else if (
+        props.buyTokenAddress === ETH_ADDRESS &&
+        props.buyAmount &&
+        (await isConnected())
+      ) {
+        setDisabled(false);
+        setButtonText("SWAP");
+        setOnClick({ function: swapOnClick });
+      }
+    })();
   }, [props.buyAmount, props.buyTokenAddress]);
 
   return (
@@ -274,4 +285,5 @@ const SwapIcon = styled(FontAwesomeIcon)`
   /* color: ${MAIN_TEXT_COLOR}; */
   width: 30px;
   height: 30px;
+  margin-top: 10%;
 `;

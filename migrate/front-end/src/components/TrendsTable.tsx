@@ -1,5 +1,6 @@
 import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
 import { MAIN_COMPONENT_COLOR, MAIN_TEXT_COLOR } from "../constants/colors";
+import styled from "styled-components";
 
 const rows: GridRowsProp = [
   { id: 1, col1: "Hello", col2: "World" },
@@ -16,9 +17,23 @@ const columns: GridColDef[] = [
 ];
 
 export default function TrendsTable(props: { width: string; height: string }) {
+  const StyledWrapper = styled.div`
+    height: ${props.height};
+    width: ${props.width};
+    background-color: ${MAIN_COMPONENT_COLOR};
+    border-radius: 10px;
+    color: ${MAIN_TEXT_COLOR};
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  `;
+
   return (
-    <div style={{ height: props.height, width: props.width }}>
-      <DataGrid
+    <StyledWrapper style={{}}>
+      <p>
+        AI-based trends table coming soon! <a href="/">Learn more</a>
+      </p>
+      {/* <DataGrid
         rows={rows}
         columns={columns}
         sx={{
@@ -32,7 +47,7 @@ export default function TrendsTable(props: { width: string; height: string }) {
         pagination={true}
         rowSelection={false}
         rowHeight={40}
-      />
-    </div>
+      /> */}
+    </StyledWrapper>
   );
 }

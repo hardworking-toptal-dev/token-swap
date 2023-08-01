@@ -13,8 +13,8 @@ export function Landing() {
       <Banner setAddress={setAddress} />
       <ChatAndContentWrapper>
         <ContentWrapper>
-          <LandingTradingBox tokenListURL="https://wispy-bird-88a7.uniswap.workers.dev/?url=http://tokens.1inch.eth.link" />
-          <TrendsTable width="50vw" height="100%" />
+          <LandingTradingBox tokenListURL="https://static.optimism.io/optimism.tokenlist.json" />
+          <TrendsTable width="50vw" height="40vh" />
         </ContentWrapper>
         <ChatBox username={address} />
       </ChatAndContentWrapper>

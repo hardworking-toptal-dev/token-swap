@@ -5,6 +5,7 @@ import {
   MAIN_TEXT_COLOR,
 } from "../constants/colors";
 import { Button } from "react-bootstrap";
+import { fontSize } from "@mui/system";
 
 export default function MainButton(props: {
   text?: string;
@@ -12,6 +13,7 @@ export default function MainButton(props: {
   className?: string;
   disabled?: boolean;
   children?: JSX.Element;
+  fontSize?: string;
   onClick: Function;
 }) {
   const StyledMainButton = styled(Button)`
@@ -32,13 +34,17 @@ export default function MainButton(props: {
     color: ${MAIN_TEXT_COLOR};
     border-color: ${MAIN_COLOR};
   `;
+
+  const Text = styled.span`
+    font-size: ${props.fontSize};
+  `;
   return (
     <StyledMainButton
       className={props.className}
       onClick={props.onClick}
       disabled={props.disabled}
     >
-      {props.text}
+      <Text> {props.text}</Text>
       {props.children}
     </StyledMainButton>
   );

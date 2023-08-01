@@ -40,12 +40,12 @@ export default function SwapBox(props: {
         shown={modalShown}
         tokens={props.tokens}
       />
-      <MainButton
+      <StyledButton
         onClick={() => setModalShown({ show: true })}
-        className=""
         width="30%"
         text={props.buttonText}
-      ></MainButton>
+        fontSize="80%"
+      ></StyledButton>
       <SwapForm
         width={"90px"}
         onChange={(event: BaseSyntheticEvent) => {
@@ -74,4 +74,9 @@ const SwapForm = styled(Form.Control)`
     float: right;
     clear: both;
   }
+`;
+
+const StyledButton = styled(MainButton)`
+  overflow: hidden;
+  white-space: nowrap;
 `;
