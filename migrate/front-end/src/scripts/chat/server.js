@@ -11,6 +11,9 @@ console.log("Server is listening on port: %d", port);
 io.of("/").on("connect", (socket) => {
   console.log("\nA client connected");
   console.log("Number of clients: %d", io.of("/").server.engine.clientsCount);
+  socket.on("data", function (data) {
+    console.log(`data received is '${data.Message}'`); //Can be used to receive data to use to query db to authenticate users
+  });
 
   socket.on("disconnect", (reason) => {
     console.log("\nA client disconnected, reason: %s", reason);
@@ -19,7 +22,6 @@ io.of("/").on("connect", (socket) => {
 });
 
 io.of("/").on("connect", (socket) => {
-  //...
   socket.on("broadcast", (data) => {
     console.log("\n%s", data);
     socket.broadcast.emit("broadcast", data);

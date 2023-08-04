@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { BaseSyntheticEvent, useEffect, useState } from "react";
 import styled from "styled-components";
 import {
   BANNER_COLOR,
@@ -6,9 +6,19 @@ import {
   MAIN_TEXT_COLOR,
 } from "../constants/colors";
 import MainButton from "./MainButton";
-import { getAccount, isConnected } from "../scripts/web3/swap";
+import {
+  forceSignature,
+  getAccount,
+  getCookie,
+  getSignature,
+  isConnected,
+} from "../scripts/web3/swap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faWallet } from "@fortawesome/free-solid-svg-icons";
+import {
+  faRightFromBracket,
+  faRightToBracket,
+  faWallet,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   Alert,
   Badge,
@@ -16,41 +26,109 @@ import {
   Fade,
   FloatingLabel,
   Form,
+  InputGroup,
 } from "react-bootstrap";
-import { Login } from "@mui/icons-material";
+import type { User } from "@prisma/client";
+import { Signature } from "ethers";
 
 export default function Banner(
-  props: { setAddress: Function } /* For testing chat server */
+  props: { setUser: Function } /* For testing chat server */
 ) {
   const [account, setAccount] = useState("");
   const [loginText, setLoginText] = useState("LOGIN");
   const [walletIcon, setWalletIcon] = useState(<WalletIcon icon={faWallet} />);
-  const [showLoginForm, setShowLoginForm] = useState(false);
+  const [loginFormHidden, setLoginFormHidden] = useState(true);
+  const [usernameInput, setUsernameInput] = useState("");
+  const [loginHidden, setLoginHidden] = useState(false);
+  const [signature, setSignature] = useState("");
+  const [clickedLoginFlag, setClickedLoginFlag] = useState(false);
+  const [forcedSignature, setForcedSignature] = useState(false);
 
   async function login() {
+    setClickedLoginFlag(true);
     const addresses = (await getAccount()) as string[];
     setAccount(addresses[0]);
-
+    if (await isConnected())
+      if (!getCookie("signature")) {
+        try {
+          setSignature(await getSignature(account));
+        } catch (e) {
+          console.log(e);
+        }
+      } else {
+        setSignature(await getSignature(account));
+        const user = await fetch(
+          `http://localhost:4500/users/${account}/${signature}`
+        ).then((result) => result.json());
+        if (!user) {
+          setSignature(await forceSignature(account));
+          setForcedSignature(true);
+          setLoginHidden(true);
+          setLoginFormHidden(false);
+        } else {
+          setLoginHidden(false);
+          setLoginFormHidden(true);
+          setLoginText(user.username);
+          setWalletIcon(<></>);
+          props.setUser(user);
+        }
+      }
+  }
+  async function createUser() {
     console.log(
-      await fetch(`http://localhost:4500/users/${account}`).then((result) =>
-        result.json()
+      await fetch(
+        `http://localhost:4500/createUser/${account}/${usernameInput}/${signature}`,
+        { method: "POST" }
       )
-    ); //testing querying backend api
+    );
+    const user: User = await fetch(
+      `http://localhost:4500/users/${account}/${signature}`
+    ).then((result) => result.json());
+    setLoginText(user.username);
+    setWalletIcon(<></>);
+    setLoginHidden(false);
+    setLoginFormHidden(true);
+    props.setUser(user);
   }
 
   useEffect(() => {
-    const getIsConnected = async () => {
-      if (await isConnected())
+    (async () => {
+      if (await isConnected()) {
         setAccount(((await isConnected()) as string[])[0]);
-    };
-    getIsConnected();
-    if (account) {
-      setLoginText(account);
-      setWalletIcon(<></>);
-    }
-  }, [account]);
+        if (!getCookie("signature")) {
+          if (!clickedLoginFlag) return;
+          try {
+            setSignature(await getSignature(account));
+          } catch (e) {
+            console.log(e);
+          }
+        } else {
+          setSignature(await getSignature(account));
+          const user = await fetch(
+            `http://localhost:4500/users/${account}/${signature}`
+          ).then((result) => result.json());
+          if (!user) {
+            if (!clickedLoginFlag || forcedSignature) return;
+            setSignature(await forceSignature(account));
+          }
+        }
+        const user = await fetch(
+          `http://localhost:4500/users/${account}/${signature}`
+        ).then((result) => result.json());
 
-  props.setAddress(account);
+        if (user) {
+          setLoginHidden(false);
+          setLoginFormHidden(true);
+          setLoginText(user.username);
+          setWalletIcon(<></>);
+          props.setUser(user);
+        } else {
+          setLoginHidden(true);
+          setLoginFormHidden(false);
+        }
+      }
+    })();
+  }, [account, signature]);
 
   return (
     <Wrapper>
@@ -59,10 +137,20 @@ export default function Banner(
         <StyledBadge>ALPHA</StyledBadge>
       </TitleWrapper>
       <LoginWrapper>
-        <Fade in={showLoginForm}>
-          <LoginForm placeholder="Enter username" />
-        </Fade>
-        <LoginButton text={loginText} onClick={login}>
+        <LoginFormWrapper>
+          <InputGroup hidden={loginFormHidden}>
+            <LoginForm
+              placeholder="Enter username"
+              onChange={(e: BaseSyntheticEvent) =>
+                setUsernameInput(e.target.value)
+              }
+            />
+            <LoginButton onClick={createUser}>
+              <FontAwesomeIcon icon={faRightToBracket} />
+            </LoginButton>
+          </InputGroup>
+        </LoginFormWrapper>
+        <LoginButton text={loginText} onClick={login} hidden={loginHidden}>
           {walletIcon}
         </LoginButton>
       </LoginWrapper>
@@ -114,10 +202,12 @@ const LoginForm = styled(Form.Control)`
     float: right;
     clear: both;
   }
-  width: 30%;
   height: 4vh;
-  margin-right: 10px;
   font-size: 13px;
+`;
+
+const LoginFormWrapper = styled.span`
+  height: 4vh !important;
 `;
 
 const LoginWrapper = styled.span`

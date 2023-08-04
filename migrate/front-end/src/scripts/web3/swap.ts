@@ -3,6 +3,7 @@ import { API_KEY } from "../../constants/0x_api_key";
 import Web3 from "web3";
 import { ERC20ABI, ZeroXABI } from "../../constants/ABI";
 import { ethers } from "ethers";
+import { signature_message } from "../../constants/signature_message";
 
 export enum TokenTypes {
   buy = "buy",
@@ -145,6 +146,35 @@ export async function getAllowance(buyTokenAddress: string) {
   }
 }
 
+export async function getSignature(address: string) {
+  const signatureCookie = getCookie("signature");
+
+  if (!signatureCookie) {
+    const signature = await web3.eth.personal.sign(
+      signature_message,
+      address,
+      "none"
+    );
+    document.cookie = `signature=${signature}`;
+    return signature;
+  }
+  return signatureCookie;
+}
+
+export async function forceSignature(address: string) {
+  const signature = await web3.eth.personal.sign(
+    signature_message,
+    address,
+    "none"
+  );
+  document.cookie = `signature=${signature}`;
+  return signature;
+}
+
+export async function getAddressFromSignature(signature: string) {
+  return await web3.eth.personal.ecRecover(signature_message, signature);
+}
+
 export async function getTransaction() {
   const transaction = await web3.eth.getTransaction(
     "0x697939a1208ce3231055c4e6da1978aed54bc518c0f7cf73cc38992765dee86c"
@@ -154,6 +184,21 @@ export async function getTransaction() {
 
   console.log(transaction.from); //To get address of who made the swap
   console.log(decodedInput?.args); //To get contract addresses and amounts of tokens swapped
+}
+
+export function getCookie(c_name: string) {
+  if (document.cookie.length > 0) {
+    let c_start = document.cookie.indexOf(c_name + "=");
+    if (c_start != -1) {
+      c_start = c_start + c_name.length + 1;
+      let c_end = document.cookie.indexOf(";", c_start);
+      if (c_end == -1) {
+        c_end = document.cookie.length;
+      }
+      return unescape(document.cookie.substring(c_start, c_end));
+    }
+  }
+  return "";
 }
 
 function ensureNotation(number: Number) {

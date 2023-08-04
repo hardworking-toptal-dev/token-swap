@@ -13,8 +13,9 @@ import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { io } from "socket.io-client";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { isConnected } from "../scripts/web3/swap";
+import type { User } from "@prisma/client";
 
-export default function ChatBox(props: { username: string }) {
+export default function ChatBox(props: { user: User }) {
   const [input, setInput] = useState("");
   const [socket, setSocket] = useState(io());
   const [chats, setChats] = useState({ array: [] as JSX.Element[] });
@@ -23,25 +24,21 @@ export default function ChatBox(props: { username: string }) {
   const [walletConnected, setWalletConnected] = useState(false);
 
   useEffect(() => {
+    console.log(props.user);
     (async () => {
-      if (props.username && (await isConnected())) {
+      if (props.user.id && (await isConnected())) {
         setWalletConnected((await isConnected()) ? true : false);
         const connectSocket = io("http://localhost:4000");
         console.log("Connecting to the server...");
         connectSocket.on("connect", () => {
           setDisabled(false);
-          console.log(`[INFO]: Welcome ${props.username}`);
+          console.log(`[INFO]: Welcome ${props.user.username}`);
+          connectSocket.emit("data", { Message: "test" }); //Can be used to make query to db to authenticate users
         });
         connectSocket.on("disconnect", (reason: any) => {
           setDisabled(true);
           console.log("[INFO]: Client disconnected, reason: %s", reason);
         });
-        // (async () => {
-        //   if (!(await isConnected())) {
-        //     setDisabled(true);
-        //     console.log(!(await isConnected()));
-        //   }
-        // })();
 
         socket.on("broadcast", (data) => {
           console.log("%s: %s", data.sender, data.msg);
@@ -58,7 +55,7 @@ export default function ChatBox(props: { username: string }) {
         setSocket(connectSocket);
       }
     })();
-  }, [props.username, walletConnected]);
+  }, [props.user, walletConnected]);
 
   useEffect(() => {
     setChats({
@@ -69,7 +66,7 @@ export default function ChatBox(props: { username: string }) {
   function sendMessage(input: string) {
     if (input)
       socket.emit("broadcast", {
-        sender: props.username,
+        sender: props.user.username,
         action: "broadcast",
         msg: input,
       });

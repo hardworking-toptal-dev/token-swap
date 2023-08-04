@@ -4,19 +4,20 @@ import ChatBox from "../components/ChatBox";
 import TrendsTable from "../components/TrendsTable";
 import Banner from "../components/Banner";
 import { useState } from "react";
+import type { User } from "@prisma/client";
 
 export function Landing() {
-  const [address, setAddress] = useState("undefined"); //for testing chatserver
+  const [user, setUser] = useState({} as User); //for testing chatserver
 
   return (
     <Wrapper>
-      <Banner setAddress={setAddress} />
+      <Banner setUser={setUser} />
       <ChatAndContentWrapper>
         <ContentWrapper>
           <LandingTradingBox tokenListURL="https://static.optimism.io/optimism.tokenlist.json" />
           <TrendsTable width="50vw" height="40vh" />
         </ContentWrapper>
-        <ChatBox username={address} />
+        <ChatBox user={user} />
       </ChatAndContentWrapper>
     </Wrapper>
   );

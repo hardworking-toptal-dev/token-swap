@@ -18,10 +18,22 @@ api.use((req, res, next) => {
 });
 
 //endpoints
-api.get("/users/:address", async (req, res) => {
-  const { address } = req.params;
-  const users = await prisma.user.findUnique({ where: { address: address } });
+api.get("/users/:address/:signature", async (req, res) => {
+  const { address, signature } = req.params;
+  const users = await prisma.user.findUnique({
+    where: { address: address, signature: signature },
+  });
+  console.log(users, signature);
   res.json(users);
+});
+
+api.post("/createUser/:address/:username/:signature", async (req, res) => {
+  const { address, username, signature } = req.params;
+
+  const response = await prisma.user.create({
+    data: { address: address, username: username, signature: signature },
+  });
+  res.json(response);
 });
 
 //server

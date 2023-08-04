@@ -14,6 +14,7 @@ export default function MainButton(props: {
   disabled?: boolean;
   children?: JSX.Element;
   fontSize?: string;
+  hidden?: boolean;
   onClick: Function;
 }) {
   const StyledMainButton = styled(Button)`
@@ -43,6 +44,7 @@ export default function MainButton(props: {
       className={props.className}
       onClick={props.onClick}
       disabled={props.disabled}
+      hidden={props.hidden}
     >
       <Text> {props.text}</Text>
       {props.children}
