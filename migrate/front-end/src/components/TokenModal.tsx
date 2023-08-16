@@ -41,6 +41,7 @@ export default function TokenModal(props: {
 
     const tokenElements = searchedTokens.map((token) => (
       <Item action={true} onClick={() => handleClose(token)}>
+        <TokenIcon src={token.logoURI} alt="" />
         {token.name} ({token.symbol})
       </Item>
     ));
@@ -74,6 +75,8 @@ const Body = styled(Modal.Body)`
 `;
 
 const Item = styled(ListGroupItem)`
+  display: flex;
+  align-items: center;
   color: ${MAIN_TEXT_COLOR};
   background-color: ${MAIN_COMPONENT_COLOR};
   border-color: ${INPUT_COLOR};
@@ -86,7 +89,6 @@ const Item = styled(ListGroupItem)`
   }
   .list-group-item[aria-expanded="true"] {
     background-color: black !important;
-    border-color: #aed248;
   }
 `;
 
@@ -97,6 +99,11 @@ const Header = styled(Modal.Header)`
 
 const List = styled(ListGroup)`
   background-color: ${MAIN_COMPONENT_COLOR};
+`;
+
+const TokenIcon = styled.img`
+  width: 20px;
+  margin-right: 5px;
 `;
 
 const Search = styled(Form.Control)`

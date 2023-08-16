@@ -12,7 +12,7 @@ import {
   getCookie,
   getSignature,
   isConnected,
-} from "../scripts/web3/swap";
+} from "../scripts/web3/frontend_web3";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faRightFromBracket,
@@ -134,7 +134,9 @@ export default function Banner(
     <Wrapper>
       <TitleWrapper>
         <Title>CHATSWAP</Title>
-        <StyledBadge>ALPHA</StyledBadge>
+        <StyledBadge>
+          ALPHA <VersionText>v1.0</VersionText>
+        </StyledBadge>
       </TitleWrapper>
       <LoginWrapper>
         <LoginFormWrapper>
@@ -150,8 +152,9 @@ export default function Banner(
             </LoginButton>
           </InputGroup>
         </LoginFormWrapper>
-        <LoginButton text={loginText} onClick={login} hidden={loginHidden}>
+        <LoginButton onClick={login} hidden={loginHidden}>
           {walletIcon}
+          {loginText}
         </LoginButton>
       </LoginWrapper>
     </Wrapper>
@@ -178,6 +181,9 @@ const StyledBadge = styled(Badge)`
   margin-left: 5%;
   background-color: black;
 `;
+const VersionText = styled.span`
+  font-size: 10px;
+`;
 const Title = styled.h2`
   margin-top: 2%;
 `;
@@ -189,7 +195,7 @@ const TitleWrapper = styled.span`
 `;
 
 const WalletIcon = styled(FontAwesomeIcon)`
-  margin-left: 10px;
+  margin-right: 10px;
 `;
 
 const LoginForm = styled(Form.Control)`

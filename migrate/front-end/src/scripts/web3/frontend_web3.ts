@@ -1,8 +1,7 @@
 import MetaMaskSDK from "@metamask/sdk";
-import { API_KEY } from "../../constants/0x_api_key";
+import { ZEROX_API_KEY } from "../../constants/API";
 import Web3 from "web3";
-import { ERC20ABI, ZeroXABI } from "../../constants/ABI";
-import { ethers } from "ethers";
+import { ERC20ABI } from "../../constants/ABI";
 import { signature_message } from "../../constants/signature_message";
 
 export enum TokenTypes {
@@ -49,7 +48,7 @@ export async function getPrice(
     const url = "https://api.0x.org/swap/v1/price/";
     const params =
       "buyToken=" + buyToken + "&sellToken=" + sellToken + "&" + buyOrSell;
-    const headers = { "0x-api-key": API_KEY };
+    const headers = { "0x-api-key": ZEROX_API_KEY };
 
     if (buyOrSell === TokenTypes.sell) {
       return fetch(
@@ -108,7 +107,7 @@ export async function swap(
     ensureNotation(buyAmount * 10 ** buyDecimals) +
     "&takerAddress=" +
     ((await getAccount()) as string[])[0];
-  const headers = { "0x-api-key": API_KEY };
+  const headers = { "0x-api-key": ZEROX_API_KEY };
 
   const quote = await fetch(url + "?" + params, { headers }).then((result) => {
     return result.json();
@@ -171,28 +170,13 @@ export async function forceSignature(address: string) {
   return signature;
 }
 
-export async function getAddressFromSignature(signature: string) {
-  return await web3.eth.personal.ecRecover(signature_message, signature);
-}
-
-export async function getTransaction() {
-  const transaction = await web3.eth.getTransaction(
-    "0x697939a1208ce3231055c4e6da1978aed54bc518c0f7cf73cc38992765dee86c"
-  );
-  const inter = new ethers.Interface(ZeroXABI);
-  const decodedInput = inter.parseTransaction({ data: transaction.input });
-
-  console.log(transaction.from); //To get address of who made the swap
-  console.log(decodedInput?.args); //To get contract addresses and amounts of tokens swapped
-}
-
 export function getCookie(c_name: string) {
   if (document.cookie.length > 0) {
     let c_start = document.cookie.indexOf(c_name + "=");
-    if (c_start != -1) {
+    if (c_start !== -1) {
       c_start = c_start + c_name.length + 1;
       let c_end = document.cookie.indexOf(";", c_start);
-      if (c_end == -1) {
+      if (c_end === -1) {
         c_end = document.cookie.length;
       }
       return unescape(document.cookie.substring(c_start, c_end));

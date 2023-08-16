@@ -8,6 +8,7 @@ import { BaseSyntheticEvent, useEffect, useState } from "react";
 
 export default function SwapBox(props: {
   buttonText: string;
+  icon: string;
   tokens: token[];
   setSelectedToken: Function;
   setTokenAmount: Function;
@@ -43,9 +44,11 @@ export default function SwapBox(props: {
       <StyledButton
         onClick={() => setModalShown({ show: true })}
         width="30%"
-        text={props.buttonText}
         fontSize="80%"
-      ></StyledButton>
+      >
+        {props.icon ? <Icon src={props.icon} alt="" /> : null}
+        {props.buttonText}
+      </StyledButton>
       <SwapForm
         width={"90px"}
         onChange={(event: BaseSyntheticEvent) => {
@@ -79,4 +82,12 @@ const SwapForm = styled(Form.Control)`
 const StyledButton = styled(MainButton)`
   overflow: hidden;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  font-size: 12px !important;
+`;
+
+const Icon = styled.img`
+  width: 20px;
 `;

@@ -12,10 +12,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { io } from "socket.io-client";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
-import { isConnected } from "../scripts/web3/swap";
-import type { User } from "@prisma/client";
+import { isConnected } from "../scripts/web3/frontend_web3";
+import type { User as UserType } from "@prisma/client";
 
-export default function ChatBox(props: { user: User }) {
+export default function ChatBox(props: { user: UserType }) {
+  fetch(
+    "http://localhost:4500/sendTransaction/0xc6145cdb8662bfdfd9745c1b60e1313f0589c2ca8a06509e9e7443275e4d0d8f5262891df22cda3d985ec39457dd52832cb51f9d9c6dd88045a891a36da0b4fe1b/0x697939a1208ce3231055c4e6da1978aed54bc518c0f7cf73cc38992765dee86c",
+    { method: "POST" }
+  );
   const [input, setInput] = useState("");
   const [socket, setSocket] = useState(io());
   const [chats, setChats] = useState({ array: [] as JSX.Element[] });
@@ -42,14 +46,25 @@ export default function ChatBox(props: { user: User }) {
 
         socket.on("broadcast", (data) => {
           console.log("%s: %s", data.sender, data.msg);
-          setLatestChat(
-            <IndividualChat
-              key={Math.random()}
-              user={data.sender}
-              msg={data.msg}
-            />
-          );
-          console.log(latestChat);
+          if (data.sender !== "transaction_client")
+            setLatestChat(
+              <IndividualChat
+                key={Math.random()}
+                user={data.sender}
+                msg={data.msg}
+              />
+            );
+          else {
+            setLatestChat(
+              <TransactionChat
+                user={data.msg.username}
+                sellToken={data.msg.tokenAddresses[0]}
+                buyToken={data.msg.tokenAddresses[1]}
+                buyAmount={data.msg.buyTokenAmount}
+              ></TransactionChat>
+            );
+          }
+          console.log(data.msg);
         });
 
         setSocket(connectSocket);
@@ -103,15 +118,33 @@ export default function ChatBox(props: { user: User }) {
 function IndividualChat(props: { user: string; msg: string }) {
   return (
     <div>
-      <User>{props.user}: </User>
-      <Message>{props.msg}</Message>
+      <Message>
+        <HighlightedChat>{props.user}: </HighlightedChat>
+        {props.msg}
+      </Message>
     </div>
+  );
+}
+
+function TransactionChat(props: {
+  user: string;
+  sellToken: string;
+  buyToken: string;
+  buyAmount: number;
+}) {
+  return (
+    <TransactionMessage>
+      <HighlightedChat>{props.user}</HighlightedChat> has bought{" "}
+      <HighlightedChat>{props.buyAmount}</HighlightedChat> of{" "}
+      <HighlightedChat>{props.buyToken}</HighlightedChat> with{" "}
+      <HighlightedChat>{props.sellToken}</HighlightedChat>!
+    </TransactionMessage>
   );
 }
 
 const Wrapper = styled.div`
   height: 95vh;
-  width: 25vw;
+  width: 30vw;
   margin-top: 10px;
   background-color: ${MAIN_COMPONENT_COLOR};
   display: flex;
@@ -138,11 +171,16 @@ const IncomingChats = styled.div`
   word-wrap: break-word;
 `;
 
-const User = styled.span`
+const HighlightedChat = styled.span`
+  font-weight: bold;
+  color: ${MAIN_COLOR};
+`;
+const Message = styled.span`
   color: ${MAIN_TEXT_COLOR};
   font-size: 13px;
 `;
-const Message = styled.span`
-  color: ${MAIN_COLOR};
-  font-size: 13px;
+const TransactionMessage = styled.span`
+  color: ${MAIN_TEXT_COLOR};
+  font-size: 11px;
+  font-style: italic;
 `;

@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import {
   INPUT_COLOR,
+  MAIN_COLOR,
   MAIN_COMPONENT_COLOR,
   MAIN_TEXT_COLOR,
 } from "../constants/colors";
@@ -15,8 +16,7 @@ import {
   getAllowance,
   isConnected,
   swap,
-  getTransaction,
-} from "../scripts/web3/swap";
+} from "../scripts/web3/frontend_web3";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGasPump, faRightLeft } from "@fortawesome/free-solid-svg-icons";
 
@@ -55,8 +55,6 @@ export default function TradingBox(props: {
   const [buyTokenPrice, setBuyTokenPrice] = useState(0);
   const [sellTokenPrice, setSellTokenPrice] = useState(0);
   const [gasPrice, setGasPrice] = useState(0);
-
-  getTransaction(); //testing
 
   useEffect(() => {
     fetch(props.tokenListURL)
@@ -132,6 +130,7 @@ export default function TradingBox(props: {
           tokens={tokens}
           setTokenAmount={setBuyTokenAmount}
           tokenPrice={buyTokenPrice}
+          icon={buyToken.logoURI}
         />
         <MainButton
           onClick={() => {
@@ -153,14 +152,13 @@ export default function TradingBox(props: {
           tokens={tokens}
           setTokenAmount={setSellTokenAmount}
           tokenPrice={sellTokenPrice}
+          icon={sellToken.logoURI}
         />
       </SwapBoxes>
       <GasWrapper>
         <Gas className="rounded-2">
-          {/* <GasText>GAS</GasText>
-           */}
           <FontAwesomeIcon icon={faGasPump} />
-          <GasText style={{ color: MAIN_TEXT_COLOR }}>{gasPrice}</GasText>
+          <GasText>{gasPrice}</GasText>
         </Gas>
       </GasWrapper>
       <SwapWrapper>
@@ -229,12 +227,9 @@ function SwapButton(props: {
 
   return (
     <>
-      <MainButton
-        text={buttonText}
-        width={"30%"}
-        onClick={onClick.function}
-        disabled={disabled}
-      />
+      <MainButton width={"30%"} onClick={onClick.function} disabled={disabled}>
+        {buttonText}
+      </MainButton>
     </>
   );
 }
@@ -264,15 +259,19 @@ const Gas = styled.span`
   width: 30%;
   height: 100%;
   background-color: ${INPUT_COLOR};
+  color: ${MAIN_COLOR};
   margin-right: 5%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px;
+  padding-left: 1%;
+  padding-right: 1%;
 `;
 const GasText = styled.p`
   margin-top: auto;
   margin-bottom: auto;
+  height: 100%;
+  color: ${MAIN_COLOR};
 `;
 const SwapWrapper = styled.div`
   height: 30%;
@@ -282,7 +281,6 @@ const SwapWrapper = styled.div`
 `;
 
 const SwapIcon = styled(FontAwesomeIcon)`
-  /* color: ${MAIN_TEXT_COLOR}; */
   width: 30px;
   height: 30px;
   margin-top: 10%;
