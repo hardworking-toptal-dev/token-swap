@@ -16,3 +16,12 @@ model User {
   address   String @unique
   signature String @unique
 }
+
+model Token {
+  address  String @id @unique
+  chainId  Int
+  decimals Int
+  logoURI  String
+  name     String
+  symbol   String
+}

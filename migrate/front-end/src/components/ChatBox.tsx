@@ -58,8 +58,8 @@ export default function ChatBox(props: { user: UserType }) {
             setLatestChat(
               <TransactionChat
                 user={data.msg.username}
-                sellToken={data.msg.tokenAddresses[0]}
-                buyToken={data.msg.tokenAddresses[1]}
+                sellToken={data.msg.sellToken}
+                buyToken={data.msg.buyToken}
                 buyAmount={data.msg.buyTokenAmount}
               ></TransactionChat>
             );

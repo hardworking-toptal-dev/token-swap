@@ -84,7 +84,7 @@ export async function getPrice(
         .then((responseDict: any) => {
           return {
             price: responseDict["price"] * amount,
-            gasEstimate: responseDict["estimatedGas"],
+            gasEstimate: responseDict["gas"],
           };
         });
     }

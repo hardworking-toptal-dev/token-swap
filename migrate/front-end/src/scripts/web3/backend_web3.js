@@ -1,6 +1,6 @@
 import { Web3 } from "web3";
 import { ethers } from "ethers";
-import { ZeroXABI } from "../../constants/ABI.js";
+import { ERC20ABI, ZeroXABI } from "../../constants/ABI.js";
 import { INFURA_API_ADDRESS } from "../../constants/API.js";
 import { signature_message } from "../../constants/signature_message.js";
 
@@ -13,18 +13,22 @@ export async function getTransaction(transactionId) {
   const blockTimeUnix =
     parseInt((await web3.eth.getBlock(transaction.blockNumber)).timestamp) *
     1000;
-  const blockTime = new Date(blockTimeUnix);
 
-  console.log(transaction.from); //To get address of who made the swap
-  console.log(decodedInput?.args); //To get contract addresses and amounts of tokens swapped
-  console.log(blockTime); //To get time that the transaction was completed.
+  const buyTokenContract = new web3.eth.Contract(
+    ERC20ABI,
+    decodedInput.args[0][1]
+  );
+  const decimals = parseInt(await buyTokenContract.methods.decimals().call());
 
   return {
     address: transaction.from,
     blocktime: blockTimeUnix,
     tokenAddresses: decodedInput.args[0],
-    sellTokenAmount: parseInt(decodedInput.args[1]),
-    buyTokenAmount: parseInt(decodedInput.args[2]),
+    // eslint-disable-next-line no-undef
+    buyTokenAmount: (
+      parseFloat(decodedInput.args[2]) /
+      10 ** decimals
+    ).toPrecision(5),
   };
 }
 

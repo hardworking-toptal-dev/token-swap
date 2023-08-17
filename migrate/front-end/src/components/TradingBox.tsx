@@ -19,8 +19,7 @@ import {
 } from "../scripts/web3/frontend_web3";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGasPump, faRightLeft } from "@fortawesome/free-solid-svg-icons";
-
-const ETH_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+import { ETH_ADDRESS } from "../constants/API";
 
 export default function TradingBox(props: {
   className?: string;
@@ -57,16 +56,13 @@ export default function TradingBox(props: {
   const [gasPrice, setGasPrice] = useState(0);
 
   useEffect(() => {
-    fetch(props.tokenListURL)
-      .then((result) => result.json())
-      .then((data: { tokens: token[] }) => {
-        const tokensData = data.tokens.filter((token) => {
-          return token.chainId === 1;
-        });
-        tokensData.push(ethereumToken);
-        setTokens(tokensData);
-      });
-  }, [props.tokenListURL]);
+    (async () => {
+      const tokens = await fetch("http://localhost:4500/tokens").then((data) =>
+        data.json()
+      );
+      setTokens(tokens);
+    })();
+  });
 
   useEffect(() => {
     if (buyToken.symbol) setBuyTokenText(buyToken.symbol);
