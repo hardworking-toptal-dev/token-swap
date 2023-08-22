@@ -62,7 +62,7 @@ export default function TradingBox(props: {
       );
       setTokens(tokens);
     })();
-  });
+  }, []);
 
   useEffect(() => {
     if (buyToken.symbol) setBuyTokenText(buyToken.symbol);
