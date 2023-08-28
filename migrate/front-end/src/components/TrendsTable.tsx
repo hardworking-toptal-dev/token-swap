@@ -31,7 +31,7 @@ export default function TrendsTable(props: { width: string; height: string }) {
   return (
     <StyledWrapper style={{}}>
       <p>
-        AI-based trends table coming soon! <a href="/">Learn more</a>
+        AI-based trends table coming soon! <a href="/faq">Learn more</a>
       </p>
       {/* <DataGrid
         rows={rows}

@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import {
   MAIN_COLOR,
+  MAIN_COLOR_DISABLED,
   MAIN_COLOR_ON_HOVER,
   MAIN_TEXT_COLOR,
 } from "../constants/colors";
@@ -17,19 +18,20 @@ export default function MainButton(props: {
 }) {
   const StyledMainButton = styled(Button)`
     &:hover {
-      background-color: ${MAIN_COLOR_ON_HOVER} !important;
+      background-color: ${MAIN_COLOR_ON_HOVER};
       border-color: ${MAIN_COLOR_ON_HOVER};
     }
     &:active {
       background-color: ${MAIN_COLOR} !important;
-      border-color: ${MAIN_COLOR_ON_HOVER} !important;
+      border-color: ${MAIN_COLOR} !important;
     }
     &:disabled {
       border: 0;
+      background-color: ${MAIN_COLOR_DISABLED};
     }
     width: ${props.width};
     /* border-radius: 15px; */
-    background-color: ${MAIN_COLOR} !important;
+    background-color: ${MAIN_COLOR};
     color: ${MAIN_TEXT_COLOR};
     border-color: ${MAIN_COLOR};
   `;

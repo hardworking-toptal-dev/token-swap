@@ -112,10 +112,20 @@ export async function swap(
   const quote = await fetch(url + "?" + params, { headers }).then((result) => {
     return result.json();
   });
-  console.log(buyDecimals);
+  console.log(quote);
 
   const receipt = await web3.eth.sendTransaction(quote);
+
   console.log(receipt);
+  const signature = await getSignature(((await getAccount()) as string[])[0]);
+  try {
+    fetch(
+      `http://localhost:4500/sendTransaction/${signature}/${receipt.transactionHash}`,
+      { method: "POST" }
+    );
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 export async function approve(buyTokenAddress: string) {

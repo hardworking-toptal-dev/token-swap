@@ -30,6 +30,7 @@ import {
 } from "react-bootstrap";
 import type { User } from "@prisma/client";
 import { Signature } from "ethers";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function Banner(
   props: { setUser: Function } /* For testing chat server */
@@ -43,6 +44,8 @@ export default function Banner(
   const [signature, setSignature] = useState("");
   const [clickedLoginFlag, setClickedLoginFlag] = useState(false);
   const [forcedSignature, setForcedSignature] = useState(false);
+
+  const navigateHome = useNavigate();
 
   async function login() {
     setClickedLoginFlag(true);
@@ -133,7 +136,14 @@ export default function Banner(
   return (
     <Wrapper>
       <TitleWrapper>
-        <Title>CHATSWAP</Title>
+        <Title
+          onClick={() => {
+            navigateHome("/");
+            navigateHome(0);
+          }}
+        >
+          CHATSWAP
+        </Title>
         <StyledBadge>
           ALPHA <VersionText>v1.0</VersionText>
         </StyledBadge>
@@ -186,6 +196,9 @@ const VersionText = styled.span`
 `;
 const Title = styled.h2`
   margin-top: 2%;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 const TitleWrapper = styled.span`
   display: flex;

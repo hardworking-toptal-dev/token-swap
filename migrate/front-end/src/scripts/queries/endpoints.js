@@ -41,38 +41,41 @@ api.post("/createUser/:address/:username/:signature", async (req, res) => {
 
 api.post("/sendTransaction/:signature/:transactionId/", async (req, res) => {
   const { signature, transactionId } = req.params;
-  const transaction = await getTransaction(transactionId);
-  const user = await prisma.user.findUnique({
-    where: { address: transaction.address, signature: signature },
-  });
-  const sellToken = await prisma.token.findUnique({
-    where: { address: transaction.tokenAddresses[0].toLowerCase() },
-  });
-  const buyToken = await prisma.token.findUnique({
-    where: { address: transaction.tokenAddresses[1].toLowerCase() },
-  });
-  const isRecent = Date.now() - transaction.blocktime <= 600000; //Transaction has to be within 10 minutes
 
-  if (user) {
-    socket.emit("broadcast", {
-      sender: "transaction_client",
-      msg: {
-        ...transaction,
-        sellToken: sellToken.symbol
-          ? sellToken.symbol
-          : transaction.tokenAddresses[0].toLowerCase(),
-        buyToken: buyToken.symbol
-          ? buyToken.symbol
-          : transaction.tokenAddresses[1].toLowerCase(),
-        username: user.username,
-      },
+  const transaction = await getTransaction(transactionId);
+  console.log(transaction);
+  if (transaction) {
+    const user = await prisma.user.findUnique({
+      where: { address: transaction.address, signature: signature },
     });
+    const sellToken = await prisma.token.findUnique({
+      where: { address: transaction.tokenAddresses[0].toLowerCase() },
+    });
+    const buyToken = await prisma.token.findUnique({
+      where: { address: transaction.tokenAddresses[1].toLowerCase() },
+    });
+    const isRecent = Date.now() - transaction.blocktime <= 600000; //Transaction has to be within 10 minutes
+
+    if (user && isRecent) {
+      socket.emit("broadcast", {
+        sender: "transaction_client",
+        msg: {
+          ...transaction,
+          sellToken: sellToken.symbol
+            ? sellToken.symbol
+            : transaction.tokenAddresses[0].toLowerCase(),
+          buyToken: buyToken.symbol
+            ? buyToken.symbol
+            : transaction.tokenAddresses[1].toLowerCase(),
+          username: user.username,
+        },
+      });
+    }
   }
 });
 
 api.get("/tokens", async (req, res) => {
   const tokens = await prisma.token.findMany({});
-  console.log(tokens);
   res.json(tokens);
 });
 

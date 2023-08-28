@@ -1,25 +1,27 @@
 import styled from "styled-components";
 import {
+  ACTIVE_INPUT,
   DISABLED_INPUT_COLOR,
   INPUT_COLOR,
   MAIN_COLOR,
   MAIN_COMPONENT_COLOR,
   MAIN_TEXT_COLOR,
 } from "../constants/colors";
-import { Form, InputGroup } from "react-bootstrap";
+import { Button, Form, InputGroup } from "react-bootstrap";
 import MainButton from "./MainButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import { faFaceSmile } from "@fortawesome/free-regular-svg-icons";
 import { io } from "socket.io-client";
-import { BaseSyntheticEvent, useEffect, useState } from "react";
+import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
 import { isConnected } from "../scripts/web3/frontend_web3";
 import type { User as UserType } from "@prisma/client";
 
 export default function ChatBox(props: { user: UserType }) {
-  fetch(
-    "http://localhost:4500/sendTransaction/0xc6145cdb8662bfdfd9745c1b60e1313f0589c2ca8a06509e9e7443275e4d0d8f5262891df22cda3d985ec39457dd52832cb51f9d9c6dd88045a891a36da0b4fe1b/0x697939a1208ce3231055c4e6da1978aed54bc518c0f7cf73cc38992765dee86c",
-    { method: "POST" }
-  );
+  // fetch(
+  //   "http://localhost:4500/sendTransaction/0xc6145cdb8662bfdfd9745c1b60e1313f0589c2ca8a06509e9e7443275e4d0d8f5262891df22cda3d985ec39457dd52832cb51f9d9c6dd88045a891a36da0b4fe1b/0xd9772fee2383bc83129edf8535902d8f8e502900bdf38ff040a0fce83293d848",
+  //   { method: "POST" } //for testing sendTransaction
+  // );
   const [input, setInput] = useState("");
   const [socket, setSocket] = useState(io());
   const [chats, setChats] = useState({ array: [] as JSX.Element[] });
@@ -87,30 +89,34 @@ export default function ChatBox(props: { user: UserType }) {
       });
     setInput("");
   }
-
   return (
     <Wrapper className="rounded-3">
       <IncomingChats>
         <>{chats.array}</>
       </IncomingChats>
-      <InputGroup>
-        <ChatInput
-          onChange={(e: BaseSyntheticEvent) => setInput(e.target.value)}
-          value={input}
-          onKeyPress={(e: KeyboardEvent) => {
-            if (e.key === "Enter") sendMessage(input);
-          }}
-          disabled={disabled}
-        ></ChatInput>
-        <MainButton
-          onClick={() => {
-            sendMessage(input);
-          }}
-          disabled={disabled}
-        >
-          <FontAwesomeIcon icon={faRightToBracket} />
-        </MainButton>
-      </InputGroup>
+      <InputWrapper>
+        <IconButton onClick={() => {}} disabled={disabled}>
+          <FontAwesomeIcon icon={faFaceSmile} />
+        </IconButton>
+        <InputGroup className="rounded-2">
+          <ChatInput
+            onChange={(e: BaseSyntheticEvent) => setInput(e.target.value)}
+            value={input}
+            onKeyPress={(e: KeyboardEvent) => {
+              if (e.key === "Enter") sendMessage(input);
+            }}
+            disabled={disabled}
+          />
+          <MainButton
+            onClick={() => {
+              sendMessage(input);
+            }}
+            disabled={disabled}
+          >
+            <FontAwesomeIcon icon={faRightToBracket} />
+          </MainButton>
+        </InputGroup>
+      </InputWrapper>
     </Wrapper>
   );
 }
@@ -155,9 +161,14 @@ const Wrapper = styled.div`
 `;
 const ChatInput = styled(Form.Control)`
   background-color: ${INPUT_COLOR};
+  border-color: transparent;
   &:disabled {
     background-color: ${DISABLED_INPUT_COLOR} !important;
     border-color: ${DISABLED_INPUT_COLOR} !important;
+  }
+  &:focus {
+    background-color: ${INPUT_COLOR};
+    outline: none;
   }
   font-size: 12px;
 `;
@@ -183,4 +194,19 @@ const TransactionMessage = styled.span`
   color: ${MAIN_TEXT_COLOR};
   font-size: 11px;
   font-style: italic;
+`;
+const IconButton = styled(Button)`
+  background-color: transparent !important;
+  border-color: transparent !important;
+  color: ${MAIN_TEXT_COLOR};
+
+  &:hover {
+    background-color: transparent !important;
+  }
+  &:active {
+    background-color: transparent !important;
+  }
+`;
+const InputWrapper = styled.span`
+  display: flex;
 `;
