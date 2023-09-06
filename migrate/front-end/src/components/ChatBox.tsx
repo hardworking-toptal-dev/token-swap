@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import {
-  ACTIVE_INPUT,
+  ACTIVE_COLOR,
   DISABLED_INPUT_COLOR,
   INPUT_COLOR,
   MAIN_COLOR,
@@ -13,11 +13,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { faFaceSmile } from "@fortawesome/free-regular-svg-icons";
 import { io } from "socket.io-client";
-import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
+import {
+  BaseSyntheticEvent,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { isConnected } from "../scripts/web3/frontend_web3";
 import type { User as UserType } from "@prisma/client";
+import EmojiPicker from "emoji-picker-react";
+import Overlay from "react-bootstrap/Overlay";
+import { UserContext } from "..";
 
-export default function ChatBox(props: { user: UserType }) {
+export default function ChatBox() {
   // fetch(
   //   "http://localhost:4500/sendTransaction/0xc6145cdb8662bfdfd9745c1b60e1313f0589c2ca8a06509e9e7443275e4d0d8f5262891df22cda3d985ec39457dd52832cb51f9d9c6dd88045a891a36da0b4fe1b/0xd9772fee2383bc83129edf8535902d8f8e502900bdf38ff040a0fce83293d848",
   //   { method: "POST" } //for testing sendTransaction
@@ -28,17 +37,21 @@ export default function ChatBox(props: { user: UserType }) {
   const [latestChat, setLatestChat] = useState(<></>);
   const [disabled, setDisabled] = useState(true);
   const [walletConnected, setWalletConnected] = useState(false);
+  const [showEmojiSelector, setShowEmojiSelector] = useState(false);
+
+  const iconRef = useRef(null);
+  const { user, setUser } = useContext(UserContext);
 
   useEffect(() => {
-    console.log(props.user);
+    console.log(user);
     (async () => {
-      if (props.user.id && (await isConnected())) {
+      if (user.id && (await isConnected())) {
         setWalletConnected((await isConnected()) ? true : false);
         const connectSocket = io("http://localhost:4000");
         console.log("Connecting to the server...");
         connectSocket.on("connect", () => {
           setDisabled(false);
-          console.log(`[INFO]: Welcome ${props.user.username}`);
+          console.log(`[INFO]: Welcome ${user.username}`);
           connectSocket.emit("data", { Message: "test" }); //Can be used to make query to db to authenticate users
         });
         connectSocket.on("disconnect", (reason: any) => {
@@ -72,7 +85,7 @@ export default function ChatBox(props: { user: UserType }) {
         setSocket(connectSocket);
       }
     })();
-  }, [props.user, walletConnected]);
+  }, [user, walletConnected]);
 
   useEffect(() => {
     setChats({
@@ -83,21 +96,42 @@ export default function ChatBox(props: { user: UserType }) {
   function sendMessage(input: string) {
     if (input)
       socket.emit("broadcast", {
-        sender: props.user.username,
+        sender: user.username,
         action: "broadcast",
         msg: input,
       });
     setInput("");
   }
+
   return (
     <Wrapper className="rounded-3">
       <IncomingChats>
         <>{chats.array}</>
       </IncomingChats>
       <InputWrapper>
-        <IconButton onClick={() => {}} disabled={disabled}>
+        <IconButton
+          ref={iconRef}
+          disabled={disabled}
+          onClick={() => setShowEmojiSelector(!showEmojiSelector)}
+        >
           <FontAwesomeIcon icon={faFaceSmile} />
         </IconButton>
+        <Overlay
+          target={iconRef}
+          show={showEmojiSelector}
+          rootClose={true}
+          onHide={() => setShowEmojiSelector(false)}
+        >
+          <EmojiWrapper>
+            <EmojiPicker
+              onEmojiClick={(e) => {
+                setInput(input + e.emoji);
+              }}
+              width="100%"
+              height="50vh"
+            />
+          </EmojiWrapper>
+        </Overlay>
         <InputGroup className="rounded-2">
           <ChatInput
             onChange={(e: BaseSyntheticEvent) => setInput(e.target.value)}
@@ -166,10 +200,6 @@ const ChatInput = styled(Form.Control)`
     background-color: ${DISABLED_INPUT_COLOR} !important;
     border-color: ${DISABLED_INPUT_COLOR} !important;
   }
-  &:focus {
-    background-color: ${INPUT_COLOR};
-    outline: none;
-  }
   font-size: 12px;
 `;
 
@@ -199,6 +229,11 @@ const IconButton = styled(Button)`
   background-color: transparent !important;
   border-color: transparent !important;
   color: ${MAIN_TEXT_COLOR};
+  margin-right: 5px;
+  width: 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
 
   &:hover {
     background-color: transparent !important;
@@ -209,4 +244,15 @@ const IconButton = styled(Button)`
 `;
 const InputWrapper = styled.span`
   display: flex;
+`;
+const EmojiWrapper = styled.div`
+  .EmojiPickerReact {
+    --epr-skin-tone-picker-menu-color: ${MAIN_TEXT_COLOR};
+    --epr-emoji-size: 25px;
+    --epr-category-label-height: 20px;
+    --epr-bg-color: ${INPUT_COLOR};
+    --epr-picker-border-color: transparent;
+    --epr-category-label-bg-color: ${INPUT_COLOR};
+    --epr-text-color: ${MAIN_TEXT_COLOR};
+  }
 `;

@@ -3,7 +3,6 @@ import { ethers } from "ethers";
 import { ERC20ABI, ZeroXABI } from "../../constants/ABI.js";
 import { ETH_ADDRESS, INFURA_API_ADDRESS } from "../../constants/API.js";
 import { signature_message } from "../../constants/signature_message.js";
-import { arrayBuffer } from "node:stream/consumers";
 
 const web3 = new Web3(INFURA_API_ADDRESS);
 
@@ -24,13 +23,7 @@ export async function getTransaction(transactionId) {
         ? [decodedInput.args[0][0], decodedInput.args[0][1]]
         : [decodedInput.args[1], decodedInput.args[0]];
 
-    const buyTokenContract = new web3.eth.Contract(
-      ERC20ABI,
-      // decodedInput.args[0][1].length > 1
-      //   ? decodedInput.args[0][1]
-      //   : decodedInput.args[1]
-      tokenAddresses[1]
-    );
+    const buyTokenContract = new web3.eth.Contract(ERC20ABI, tokenAddresses[1]);
 
     const decimals =
       tokenAddresses[1] !== ETH_ADDRESS
@@ -46,11 +39,7 @@ export async function getTransaction(transactionId) {
     return {
       address: transaction.from,
       blocktime: blockTimeUnix,
-      tokenAddresses:
-        // typeof decodedInput.args[0] === "string"
-        //   ? [decodedInput.args[0], decodedInput.args[1]]
-        //   : decodedInput.args[0],
-        tokenAddresses,
+      tokenAddresses: tokenAddresses,
       // eslint-disable-next-line no-undef
       buyTokenAmount: amount,
     };

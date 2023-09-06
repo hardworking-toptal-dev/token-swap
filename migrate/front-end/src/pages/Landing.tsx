@@ -7,17 +7,15 @@ import { useState } from "react";
 import type { User } from "@prisma/client";
 
 export function Landing() {
-  const [user, setUser] = useState({} as User); //for testing chatserver
-
   return (
     <Wrapper>
-      <Banner setUser={setUser} />
+      <Banner />
       <ChatAndContentWrapper>
         <ContentWrapper>
           <LandingTradingBox tokenListURL="https://static.optimism.io/optimism.tokenlist.json" />
           <TrendsTable width="50vw" height="40vh" />
         </ContentWrapper>
-        <ChatBox user={user} />
+        <ChatBox />
       </ChatAndContentWrapper>
     </Wrapper>
   );

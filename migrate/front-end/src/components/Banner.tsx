@@ -1,8 +1,11 @@
-import React, { BaseSyntheticEvent, useEffect, useState } from "react";
+import { BaseSyntheticEvent, useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import {
+  ACTIVE_COLOR,
   BANNER_COLOR,
   INPUT_COLOR,
+  MAIN_COLOR,
+  MAIN_COLOR_ON_HOVER,
   MAIN_TEXT_COLOR,
 } from "../constants/colors";
 import MainButton from "./MainButton";
@@ -14,38 +17,25 @@ import {
   isConnected,
 } from "../scripts/web3/frontend_web3";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faRightFromBracket,
-  faRightToBracket,
-  faWallet,
-} from "@fortawesome/free-solid-svg-icons";
-import {
-  Alert,
-  Badge,
-  Collapse,
-  Fade,
-  FloatingLabel,
-  Form,
-  InputGroup,
-} from "react-bootstrap";
+import { faRightToBracket, faWallet } from "@fortawesome/free-solid-svg-icons";
+import { Badge, Form, InputGroup } from "react-bootstrap";
 import type { User } from "@prisma/client";
-import { Signature } from "ethers";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { UserButton } from "./UserButton";
+import { UserContext } from "..";
 
-export default function Banner(
-  props: { setUser: Function } /* For testing chat server */
-) {
+export default function Banner() {
   const [account, setAccount] = useState("");
-  const [loginText, setLoginText] = useState("LOGIN");
-  const [walletIcon, setWalletIcon] = useState(<WalletIcon icon={faWallet} />);
   const [loginFormHidden, setLoginFormHidden] = useState(true);
   const [usernameInput, setUsernameInput] = useState("");
-  const [loginHidden, setLoginHidden] = useState(false);
+  const [loginButtonHidden, setLoginButtonHidden] = useState(false);
+  const [userButtonHidden, setUserButtonHidden] = useState(true);
   const [signature, setSignature] = useState("");
   const [clickedLoginFlag, setClickedLoginFlag] = useState(false);
   const [forcedSignature, setForcedSignature] = useState(false);
 
   const navigateHome = useNavigate();
+  const { user, setUser } = useContext(UserContext);
 
   async function login() {
     setClickedLoginFlag(true);
@@ -63,17 +53,19 @@ export default function Banner(
         const user = await fetch(
           `http://localhost:4500/users/${account}/${signature}`
         ).then((result) => result.json());
+
         if (!user) {
           setSignature(await forceSignature(account));
           setForcedSignature(true);
-          setLoginHidden(true);
+          setLoginButtonHidden(true);
           setLoginFormHidden(false);
         } else {
-          setLoginHidden(false);
+          setLoginButtonHidden(true);
           setLoginFormHidden(true);
-          setLoginText(user.username);
-          setWalletIcon(<></>);
-          props.setUser(user);
+          // setLoginText(user.username);
+          // setWalletIcon(<></>);
+          setUser(user);
+          setUserButtonHidden(false);
         }
       }
   }
@@ -87,11 +79,12 @@ export default function Banner(
     const user: User = await fetch(
       `http://localhost:4500/users/${account}/${signature}`
     ).then((result) => result.json());
-    setLoginText(user.username);
-    setWalletIcon(<></>);
-    setLoginHidden(false);
+    // setLoginText(user.username);
+    // setWalletIcon(<></>);
+    setLoginButtonHidden(true);
     setLoginFormHidden(true);
-    props.setUser(user);
+    setUser(user);
+    setUserButtonHidden(false);
   }
 
   useEffect(() => {
@@ -120,13 +113,15 @@ export default function Banner(
         ).then((result) => result.json());
 
         if (user) {
-          setLoginHidden(false);
+          setLoginButtonHidden(true);
           setLoginFormHidden(true);
-          setLoginText(user.username);
-          setWalletIcon(<></>);
-          props.setUser(user);
+          // setLoginText(user.username);
+          // setWalletIcon(<></>);
+          setUser(user);
+          setUser(user);
+          setUserButtonHidden(false);
         } else {
-          setLoginHidden(true);
+          setLoginButtonHidden(true);
           setLoginFormHidden(false);
         }
       }
@@ -151,7 +146,7 @@ export default function Banner(
       <LoginWrapper>
         <LoginFormWrapper>
           <InputGroup hidden={loginFormHidden}>
-            <LoginForm
+            <StyledInput
               placeholder="Enter username"
               onChange={(e: BaseSyntheticEvent) =>
                 setUsernameInput(e.target.value)
@@ -162,10 +157,10 @@ export default function Banner(
             </LoginButton>
           </InputGroup>
         </LoginFormWrapper>
-        <LoginButton onClick={login} hidden={loginHidden}>
-          {walletIcon}
-          {loginText}
+        <LoginButton onClick={login} hidden={loginButtonHidden}>
+          <WalletIcon icon={faWallet} /> LOGIN
         </LoginButton>
+        <UserButton user={user} hidden={userButtonHidden} />
       </LoginWrapper>
     </Wrapper>
   );
@@ -211,7 +206,7 @@ const WalletIcon = styled(FontAwesomeIcon)`
   margin-right: 10px;
 `;
 
-const LoginForm = styled(Form.Control)`
+const StyledInput = styled(Form.Control)`
   background-color: ${INPUT_COLOR};
   border-color: ${INPUT_COLOR};
   form {

@@ -1,19 +1,13 @@
 import styled from "styled-components";
-import TradingBox from "../components/TradingBox";
 import ChatBox from "../components/ChatBox";
-import TrendsTable from "../components/TrendsTable";
 import Banner from "../components/Banner";
-import { useState } from "react";
-import type { User } from "@prisma/client";
 
 export function Faq() {
-  const [user, setUser] = useState({} as User); //for testing chatserver
-
   return (
     <Wrapper>
-      <Banner setUser={setUser} />
+      <Banner />
       <ChatAndContentWrapper>
-        <ChatBox user={user} />
+        <ChatBox />
         <p>Test FAQ</p>
       </ChatAndContentWrapper>
     </Wrapper>

@@ -79,6 +79,19 @@ api.get("/tokens", async (req, res) => {
   res.json(tokens);
 });
 
+api.post(
+  "/changeUsername/:address/:signature/:newUsername",
+  async (req, res) => {
+    const { address, signature, newUsername } = req.params;
+    const user = await prisma.user.update({
+      data: { username: newUsername },
+      where: { address: address, signature: signature },
+    });
+
+    res.json(user);
+  }
+);
+
 //server
 const server = api.listen(port, () => {
   console.log(`Server listening at port ${port}`);

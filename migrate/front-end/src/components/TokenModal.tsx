@@ -4,6 +4,7 @@ import { token } from "../constants/types";
 import { Form, InputGroup, ListGroup, ListGroupItem } from "react-bootstrap";
 import styled from "styled-components";
 import {
+  ACTIVE_COLOR,
   INPUT_COLOR,
   MAIN_COLOR,
   MAIN_COLOR_ON_HOVER,
@@ -81,7 +82,7 @@ const Item = styled(ListGroupItem)`
   background-color: ${MAIN_COMPONENT_COLOR};
   border-color: ${INPUT_COLOR};
   &:hover {
-    color: white;
+    color: ${ACTIVE_COLOR};
     background-color: ${MAIN_COLOR_ON_HOVER};
   }
   &:active {
