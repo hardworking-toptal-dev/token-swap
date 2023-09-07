@@ -23,6 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 .prettierrc
-/src/constants/API.js
 migrate/front-end/prisma/migrations
 migrate/front-end/prisma/dev.db

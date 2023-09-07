@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-  ]
+, "src/constants/sensitive.js"  ]
 }

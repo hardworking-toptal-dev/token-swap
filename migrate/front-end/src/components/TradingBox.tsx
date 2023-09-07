@@ -19,7 +19,7 @@ import {
 } from "../scripts/web3/frontend_web3";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGasPump, faRightLeft } from "@fortawesome/free-solid-svg-icons";
-import { ETH_ADDRESS } from "../constants/API";
+import { ETH_ADDRESS } from "../constants/ABI";
 
 export default function TradingBox(props: {
   className?: string;

@@ -6,6 +6,7 @@ mainsite/db.sqlite3
 mainsite/db.sqlite3
 migrate/front-end/.prettierrc
 .prettierrc
-migrate/front-end/src/constants/API.js
 migrate/front-end/prisma/migrations
 migrate/front-end/prisma/dev.db
+migrate/front-end/prisma/dev.db-journal
+migrate/front-end/src/constants/sensitive.js

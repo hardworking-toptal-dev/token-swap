@@ -1,3 +1,4 @@
+import { PrismaClient } from "@prisma/client";
 import { RateLimiterMemory } from "rate-limiter-flexible";
 import { Server } from "socket.io";
 
@@ -7,6 +8,8 @@ const io = new Server(4000, {
     origin: "*",
   },
 });
+const prisma = new PrismaClient();
+
 console.log("Server is listening on port: %d", port);
 
 const rateLimiter = new RateLimiterMemory({
@@ -17,10 +20,18 @@ const rateLimiter = new RateLimiterMemory({
 io.of("/").on("connect", (socket) => {
   console.log("\nA client connected");
   console.log("Number of clients: %d", io.of("/").server.engine.clientsCount);
+  let user;
+
   socket.on("data", async (data) => {
     try {
       await rateLimiter.consume(socket.handshake.address); // consume 1 point per event from IP
-      console.log(`data received is '${data.Message}'`); //Can be used to receive data to use to query db to authenticate users
+      console.log(`data received is '${data.address}'`); //Can be used to receive data to use to query db to authenticate users
+      user = await prisma.user.findUnique({
+        where: {
+          address: data.address ? data.address : "",
+          signature: data.signature ? data.signature : "",
+        },
+      });
     } catch (e) {
       console.log(e);
     }
@@ -30,14 +41,18 @@ io.of("/").on("connect", (socket) => {
     console.log("\nA client disconnected, reason: %s", reason);
     console.log("Number of clients: %d", io.of("/").server.engine.clientsCount);
   });
-});
 
-io.of("/").on("connect", (socket) => {
   socket.on("broadcast", async (data) => {
     try {
       await rateLimiter.consume(socket.handshake.address); // consume 1 point per event from IP
-      console.log("\n%s", data);
-      socket.broadcast.emit("broadcast", data);
+      const authenticated =
+        user.address === data.sender && user.signature === data.signature;
+      if (user && authenticated)
+        socket.broadcast.emit("broadcast", {
+          sender: user.username,
+          action: data.action,
+          msg: data.msg,
+        });
     } catch (e) {
       console.log(e);
     }

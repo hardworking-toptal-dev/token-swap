@@ -1,8 +1,8 @@
 import MetaMaskSDK from "@metamask/sdk";
-import { ZEROX_API_KEY } from "../../constants/API";
 import Web3 from "web3";
 import { ERC20ABI } from "../../constants/ABI";
 import { signature_message } from "../../constants/signature_message";
+import { ZEROX_API_KEY } from "../../constants/sensitive";
 
 export enum TokenTypes {
   buy = "buy",

@@ -5915,3 +5915,5 @@ export const ZeroXABI = [
     type: "function",
   },
 ];
+
+export const ETH_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";

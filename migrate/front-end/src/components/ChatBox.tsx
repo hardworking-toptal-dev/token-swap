@@ -27,10 +27,6 @@ import Overlay from "react-bootstrap/Overlay";
 import { UserContext } from "..";
 
 export default function ChatBox() {
-  // fetch(
-  //   "http://localhost:4500/sendTransaction/0xc6145cdb8662bfdfd9745c1b60e1313f0589c2ca8a06509e9e7443275e4d0d8f5262891df22cda3d985ec39457dd52832cb51f9d9c6dd88045a891a36da0b4fe1b/0xd9772fee2383bc83129edf8535902d8f8e502900bdf38ff040a0fce83293d848",
-  //   { method: "POST" } //for testing sendTransaction
-  // );
   const [input, setInput] = useState("");
   const [socket, setSocket] = useState(io());
   const [chats, setChats] = useState({ array: [] as JSX.Element[] });
@@ -38,54 +34,58 @@ export default function ChatBox() {
   const [disabled, setDisabled] = useState(true);
   const [walletConnected, setWalletConnected] = useState(false);
   const [showEmojiSelector, setShowEmojiSelector] = useState(false);
+  const [socketConnected, setSocketConnected] = useState(false);
 
   const iconRef = useRef(null);
   const { user, setUser } = useContext(UserContext);
 
   useEffect(() => {
-    console.log(user);
     (async () => {
-      if (user.id && (await isConnected())) {
-        setWalletConnected((await isConnected()) ? true : false);
-        const connectSocket = io("http://localhost:4000");
-        console.log("Connecting to the server...");
-        connectSocket.on("connect", () => {
+      setWalletConnected((await isConnected()) ? true : false);
+      const connectSocket = io("http://localhost:4000");
+      console.log("Connecting to the server...");
+      connectSocket.on("connect", () => {
+        console.log("connected");
+        setSocketConnected(true);
+        if (user.id) {
           setDisabled(false);
-          console.log(`[INFO]: Welcome ${user.username}`);
-          connectSocket.emit("data", { Message: "test" }); //Can be used to make query to db to authenticate users
-        });
-        connectSocket.on("disconnect", (reason: any) => {
-          setDisabled(true);
-          console.log("[INFO]: Client disconnected, reason: %s", reason);
-        });
+          connectSocket.emit("data", {
+            address: user.address,
+            signature: user.signature,
+          });
+        }
+      });
+      connectSocket.on("disconnect", (reason: any) => {
+        setDisabled(true);
+        console.log("[INFO]: Client disconnected, reason: %s", reason);
+      });
 
-        socket.on("broadcast", (data) => {
-          console.log("%s: %s", data.sender, data.msg);
-          if (data.sender !== "transaction_client")
-            setLatestChat(
-              <IndividualChat
-                key={Math.random()}
-                user={data.sender}
-                msg={data.msg}
-              />
-            );
-          else {
-            setLatestChat(
-              <TransactionChat
-                user={data.msg.username}
-                sellToken={data.msg.sellToken}
-                buyToken={data.msg.buyToken}
-                buyAmount={data.msg.buyTokenAmount}
-              ></TransactionChat>
-            );
-          }
-          console.log(data.msg);
-        });
+      socket.on("broadcast", (data) => {
+        console.log("%s: %s", data.sender, data.msg);
+        if (data.sender !== "transaction_client")
+          setLatestChat(
+            <IndividualChat
+              key={Math.random()}
+              user={data.sender}
+              msg={data.msg}
+            />
+          );
+        else {
+          setLatestChat(
+            <TransactionChat
+              user={data.msg.username}
+              sellToken={data.msg.sellToken}
+              buyToken={data.msg.buyToken}
+              buyAmount={data.msg.buyTokenAmount}
+            ></TransactionChat>
+          );
+        }
+        console.log(data.msg);
+      });
 
-        setSocket(connectSocket);
-      }
+      setSocket(connectSocket);
     })();
-  }, [user, walletConnected]);
+  }, [user, walletConnected, socketConnected]);
 
   useEffect(() => {
     setChats({
@@ -96,7 +96,8 @@ export default function ChatBox() {
   function sendMessage(input: string) {
     if (input)
       socket.emit("broadcast", {
-        sender: user.username,
+        sender: user.address,
+        signature: user.signature,
         action: "broadcast",
         msg: input,
       });

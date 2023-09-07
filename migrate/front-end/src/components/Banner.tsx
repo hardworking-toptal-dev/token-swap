@@ -160,7 +160,7 @@ export default function Banner() {
         <LoginButton onClick={login} hidden={loginButtonHidden}>
           <WalletIcon icon={faWallet} /> LOGIN
         </LoginButton>
-        <UserButton user={user} hidden={userButtonHidden} />
+        <UserButton hidden={userButtonHidden} />
       </LoginWrapper>
     </Wrapper>
   );

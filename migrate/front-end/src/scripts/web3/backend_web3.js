@@ -1,8 +1,9 @@
 import { Web3 } from "web3";
 import { ethers } from "ethers";
 import { ERC20ABI, ZeroXABI } from "../../constants/ABI.js";
-import { ETH_ADDRESS, INFURA_API_ADDRESS } from "../../constants/API.js";
 import { signature_message } from "../../constants/signature_message.js";
+import { INFURA_API_ADDRESS } from "../../constants/sensitive.js";
+import { ETH_ADDRESS } from "../../constants/ABI.js";
 
 const web3 = new Web3(INFURA_API_ADDRESS);
 

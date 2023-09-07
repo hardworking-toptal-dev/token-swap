@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import express from "express";
 import io from "socket.io-client";
 import { getTransaction } from "../web3/backend_web3.js";
+import { TRANSACTION_CLIENT_SIGNATURE } from "../../constants/sensitive.js";
+import { RESTRICTED_USERNAMES } from "../../constants/restricted_usernames.js";
 
 const port = 4500;
 const api = express();
@@ -57,8 +59,15 @@ api.post("/sendTransaction/:signature/:transactionId/", async (req, res) => {
     const isRecent = Date.now() - transaction.blocktime <= 600000; //Transaction has to be within 10 minutes
 
     if (user && isRecent) {
+      socket.emit("data", {
+        sender: "transaction_client",
+        address: "transaction_client",
+        signature: TRANSACTION_CLIENT_SIGNATURE,
+      });
       socket.emit("broadcast", {
         sender: "transaction_client",
+        address: "transaction_client",
+        signature: TRANSACTION_CLIENT_SIGNATURE,
         msg: {
           ...transaction,
           sellToken: sellToken.symbol
@@ -83,12 +92,17 @@ api.post(
   "/changeUsername/:address/:signature/:newUsername",
   async (req, res) => {
     const { address, signature, newUsername } = req.params;
-    const user = await prisma.user.update({
-      data: { username: newUsername },
-      where: { address: address, signature: signature },
-    });
+    const isRestricted = RESTRICTED_USERNAMES.some(
+      (username) => newUsername === username
+    );
+    if (!isRestricted) {
+      const user = await prisma.user.update({
+        data: { username: newUsername },
+        where: { address: address, signature: signature },
+      });
 
-    res.json(user);
+      res.json(user);
+    }
   }
 );
 

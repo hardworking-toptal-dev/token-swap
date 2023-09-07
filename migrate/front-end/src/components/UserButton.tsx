@@ -1,5 +1,6 @@
 import {
   faPenToSquare,
+  faCheckDouble,
   faRightToBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,6 +10,7 @@ import {
   InputGroup,
   Dropdown,
   Form,
+  Button,
 } from "react-bootstrap";
 import styled from "styled-components";
 import {
@@ -16,15 +18,21 @@ import {
   MAIN_TEXT_COLOR,
   MAIN_COLOR_ON_HOVER,
   ACTIVE_COLOR,
+  BANNER_COLOR,
   INPUT_COLOR,
   MAIN_COMPONENT_COLOR,
 } from "../constants/colors";
 import MainButton from "./MainButton";
 import type { User } from "@prisma/client";
-import { BaseSyntheticEvent, useContext, useState } from "react";
+import {
+  BaseSyntheticEvent,
+  SetStateAction,
+  useContext,
+  useState,
+} from "react";
 import { UserContext } from "..";
 
-export function UserButton(props: { hidden: boolean; user: User }) {
+export function UserButton(props: { hidden: boolean }) {
   const { user, setUser } = useContext(UserContext);
 
   const [showEditUserModal, setShowEditUserModal] = useState(false);
@@ -32,21 +40,21 @@ export function UserButton(props: { hidden: boolean; user: User }) {
 
   async function requestNewUsername() {
     if (newUsernameValue) {
-      const user = await fetch(
-        `http://localhost:4500/changeUsername/${props.user.address}/${props.user.signature}/${newUsernameValue}`,
+      const newUser = await fetch(
+        `http://localhost:4500/changeUsername/${user.address}/${user.signature}/${newUsernameValue}`,
         {
           method: "POST",
         }
       );
 
-      setUser(await user.json());
+      setUser(await newUser.json());
       setShowEditUserModal(false);
     }
   }
 
   return (
     <UserButtonWrapper>
-      <DropdownButton title={props.user.username} hidden={props.hidden}>
+      <DropdownButton title={user.username} hidden={props.hidden}>
         <UserItem eventKey="1" onClick={() => setShowEditUserModal(true)}>
           Change Username <FontAwesomeIcon icon={faPenToSquare} />
         </UserItem>
