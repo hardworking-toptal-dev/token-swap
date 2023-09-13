@@ -7,10 +7,27 @@ import { Faq } from "./pages/FAQ";
 import { ErrorPage } from "./pages/Error";
 import { createContext, useState } from "react";
 import type { User } from "@prisma/client";
+import { PageTemplate } from "./pages/PageWrapper";
 
 const router = createBrowserRouter([
-  { path: "/", element: <Landing />, errorElement: <ErrorPage /> },
-  { path: "/faq", element: <Faq />, errorElement: <ErrorPage /> },
+  {
+    path: "/",
+    element: (
+      <PageTemplate>
+        <Landing />
+      </PageTemplate>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/faq",
+    element: (
+      <PageTemplate>
+        <Faq />
+      </PageTemplate>
+    ),
+    errorElement: <ErrorPage />,
+  },
 ]);
 
 const root = ReactDOM.createRoot(

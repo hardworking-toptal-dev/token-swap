@@ -1,6 +1,5 @@
 import {
   faPenToSquare,
-  faCheckDouble,
   faRightToBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,7 +9,6 @@ import {
   InputGroup,
   Dropdown,
   Form,
-  Button,
 } from "react-bootstrap";
 import styled from "styled-components";
 import {
@@ -18,18 +16,11 @@ import {
   MAIN_TEXT_COLOR,
   MAIN_COLOR_ON_HOVER,
   ACTIVE_COLOR,
-  BANNER_COLOR,
   INPUT_COLOR,
   MAIN_COMPONENT_COLOR,
 } from "../constants/colors";
 import MainButton from "./MainButton";
-import type { User } from "@prisma/client";
-import {
-  BaseSyntheticEvent,
-  SetStateAction,
-  useContext,
-  useState,
-} from "react";
+import { BaseSyntheticEvent, useContext, useState } from "react";
 import { UserContext } from "..";
 
 export function UserButton(props: { hidden: boolean }) {

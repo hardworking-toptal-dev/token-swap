@@ -34,7 +34,7 @@ export default function Banner() {
   const [clickedLoginFlag, setClickedLoginFlag] = useState(false);
   const [forcedSignature, setForcedSignature] = useState(false);
 
-  const navigateHome = useNavigate();
+  const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
 
   async function login() {
@@ -133,8 +133,7 @@ export default function Banner() {
       <TitleWrapper>
         <Title
           onClick={() => {
-            navigateHome("/");
-            navigateHome(0);
+            navigate("/");
           }}
         >
           CHATSWAP
@@ -179,6 +178,7 @@ const Wrapper = styled.div`
   align-items: center;
   padding-left: 1%;
   padding-right: 1%;
+  z-index: 999;
 `;
 
 const StyledBadge = styled(Badge)`

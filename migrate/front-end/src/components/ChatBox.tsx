@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import {
-  ACTIVE_COLOR,
   DISABLED_INPUT_COLOR,
   INPUT_COLOR,
   MAIN_COLOR,
@@ -21,12 +20,11 @@ import {
   useState,
 } from "react";
 import { isConnected } from "../scripts/web3/frontend_web3";
-import type { User as UserType } from "@prisma/client";
 import EmojiPicker from "emoji-picker-react";
 import Overlay from "react-bootstrap/Overlay";
 import { UserContext } from "..";
 
-export default function ChatBox() {
+export default function ChatBox(props: { className?: string }) {
   const [input, setInput] = useState("");
   const [socket, setSocket] = useState(io());
   const [chats, setChats] = useState({ array: [] as JSX.Element[] });
@@ -37,7 +35,7 @@ export default function ChatBox() {
   const [socketConnected, setSocketConnected] = useState(false);
 
   const iconRef = useRef(null);
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     (async () => {
@@ -66,14 +64,17 @@ export default function ChatBox() {
           setLatestChat(
             <IndividualChat
               key={Math.random()}
-              user={data.sender}
+              username={data.sender}
+              address={data.address}
               msg={data.msg}
             />
           );
         else {
+          console.log(data.msg);
           setLatestChat(
             <TransactionChat
               user={data.msg.username}
+              address={data.msg.address}
               sellToken={data.msg.sellToken}
               buyToken={data.msg.buyToken}
               buyAmount={data.msg.buyTokenAmount}
@@ -105,7 +106,7 @@ export default function ChatBox() {
   }
 
   return (
-    <Wrapper className="rounded-3">
+    <Wrapper className={`rounded-3 ${props.className}`}>
       <IncomingChats>
         <>{chats.array}</>
       </IncomingChats>
@@ -156,11 +157,20 @@ export default function ChatBox() {
   );
 }
 
-function IndividualChat(props: { user: string; msg: string }) {
+function IndividualChat(props: {
+  username: string;
+  address: string;
+  msg: string;
+}) {
   return (
     <div>
       <Message>
-        <HighlightedChat>{props.user}: </HighlightedChat>
+        <HighlightedUsername
+          href={`https://etherscan.io/address/${props.address}`}
+          target="_blank"
+        >
+          {props.username}:
+        </HighlightedUsername>{" "}
         {props.msg}
       </Message>
     </div>
@@ -169,14 +179,20 @@ function IndividualChat(props: { user: string; msg: string }) {
 
 function TransactionChat(props: {
   user: string;
+  address: string;
   sellToken: string;
   buyToken: string;
   buyAmount: number;
 }) {
   return (
     <TransactionMessage>
-      <HighlightedChat>{props.user}</HighlightedChat> has bought{" "}
-      <HighlightedChat>{props.buyAmount}</HighlightedChat> of{" "}
+      <HighlightedUsername
+        href={`https://etherscan.io/address/${props.address}`}
+        target="_blank"
+      >
+        {props.user}
+      </HighlightedUsername>{" "}
+      has bought <HighlightedChat>{props.buyAmount}</HighlightedChat> of{" "}
       <HighlightedChat>{props.buyToken}</HighlightedChat> with{" "}
       <HighlightedChat>{props.sellToken}</HighlightedChat>!
     </TransactionMessage>
@@ -184,11 +200,11 @@ function TransactionChat(props: {
 }
 
 const Wrapper = styled.div`
-  height: 95vh;
-  width: 30vw;
+  height: 100%;
+  max-height: 93vh;
   margin-top: 10px;
   background-color: ${MAIN_COMPONENT_COLOR};
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 5px;
@@ -205,18 +221,31 @@ const ChatInput = styled(Form.Control)`
 `;
 
 const IncomingChats = styled.div`
-  height: 93%;
+  height: 100%;
   width: 100%;
   overflow-y: auto;
   display: flex;
   flex-direction: column-reverse;
   word-wrap: break-word;
+  margin-bottom: 2%;
 `;
 
 const HighlightedChat = styled.span`
   font-weight: bold;
   color: ${MAIN_COLOR};
 `;
+
+const HighlightedUsername = styled.a`
+  font-weight: bold;
+  color: ${MAIN_COLOR};
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+`;
+
 const Message = styled.span`
   color: ${MAIN_TEXT_COLOR};
   font-size: 13px;

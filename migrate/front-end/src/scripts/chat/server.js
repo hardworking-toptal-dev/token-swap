@@ -20,13 +20,13 @@ const rateLimiter = new RateLimiterMemory({
 io.of("/").on("connect", (socket) => {
   console.log("\nA client connected");
   console.log("Number of clients: %d", io.of("/").server.engine.clientsCount);
-  let user;
+  let transactionClientUser;
 
   socket.on("data", async (data) => {
     try {
       await rateLimiter.consume(socket.handshake.address); // consume 1 point per event from IP
       console.log(`data received is '${data.address}'`); //Can be used to receive data to use to query db to authenticate users
-      user = await prisma.user.findUnique({
+      transactionClientUser = await prisma.user.findUnique({
         where: {
           address: data.address ? data.address : "",
           signature: data.signature ? data.signature : "",
@@ -46,10 +46,12 @@ io.of("/").on("connect", (socket) => {
     try {
       await rateLimiter.consume(socket.handshake.address); // consume 1 point per event from IP
       const authenticated =
-        user.address === data.sender && user.signature === data.signature;
-      if (user && authenticated)
+        transactionClientUser.address === data.sender &&
+        transactionClientUser.signature === data.signature;
+      if (transactionClientUser && authenticated)
         socket.broadcast.emit("broadcast", {
-          sender: user.username,
+          sender: transactionClientUser.username,
+          address: transactionClientUser.address,
           action: data.action,
           msg: data.msg,
         });

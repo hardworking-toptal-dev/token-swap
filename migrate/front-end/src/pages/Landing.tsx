@@ -1,48 +1,26 @@
 import styled from "styled-components";
 import TradingBox from "../components/TradingBox";
-import ChatBox from "../components/ChatBox";
-import TrendsTable from "../components/TrendsTable";
-import Banner from "../components/Banner";
-import { useState } from "react";
-import type { User } from "@prisma/client";
+import { TrendsTable } from "../components/TrendsTable";
 
 export function Landing() {
   return (
     <Wrapper>
-      <Banner />
-      <ChatAndContentWrapper>
-        <ContentWrapper>
-          <LandingTradingBox tokenListURL="https://static.optimism.io/optimism.tokenlist.json" />
-          <TrendsTable width="50vw" height="40vh" />
-        </ContentWrapper>
-        <ChatBox />
-      </ChatAndContentWrapper>
+      <TradingBox tokenListURL="https://static.optimism.io/optimism.tokenlist.json" />
+      <StyledTrendsTable />
     </Wrapper>
   );
 }
 
 const Wrapper = styled.div`
-  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  margin-top: 5%;
 `;
 
-const ChatAndContentWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
-const ContentWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  justify-content: flex-start;
-  align-items: center;
-  margin-top: 3%;
-`;
-const LandingTradingBox = styled(TradingBox)`
-  margin-top: 3%;
-  margin-bottom: 2%;
+const StyledTrendsTable = styled(TrendsTable)`
+  height: 35vh;
+  width: 50vw;
+  margin-top: 3vh;
 `;
