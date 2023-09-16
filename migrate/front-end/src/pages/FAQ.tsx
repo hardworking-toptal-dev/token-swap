@@ -4,6 +4,7 @@ import {
   INPUT_COLOR,
   MAIN_COLOR_ON_HOVER,
   MAIN_COMPONENT_COLOR,
+  SECONDARY_INPUT_COLOR,
 } from "../constants/colors";
 import { FAQs } from "../constants/FAQ";
 
@@ -51,7 +52,7 @@ const AccordionWrapper = styled.div`
   }
   .accordion-item {
     border-color: ${MAIN_COLOR_ON_HOVER};
-    background-color: ${INPUT_COLOR};
+    background-color: ${SECONDARY_INPUT_COLOR};
     border: none;
   }
   .accordion-body {

@@ -21,17 +21,22 @@ export async function getAccount() {
 }
 
 export async function isConnected() {
-  const possibleAccounts = await ethereum
-    ?.request({ method: "eth_accounts" })
-    .then((accounts) => {
-      return accounts;
-    });
-  if ((possibleAccounts as string[])[0]) {
-    return await getAccount().then((accounts) => {
-      return accounts as string[];
-    });
-    // getUsername();
-  } else {
+  try {
+    const possibleAccounts = await ethereum
+      ?.request({ method: "eth_accounts" })
+      .then((accounts) => {
+        return accounts;
+      });
+    if ((possibleAccounts as string[])[0]) {
+      return await getAccount().then((accounts) => {
+        return accounts as string[];
+      });
+      // getUsername();
+    } else {
+      return null;
+    }
+  } catch (e) {
+    console.log(e);
     return null;
   }
 }

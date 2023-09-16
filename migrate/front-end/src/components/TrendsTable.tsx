@@ -1,5 +1,6 @@
 import {
   LINK_COLOR,
+  MAIN_COLOR,
   MAIN_COMPONENT_COLOR,
   MAIN_TEXT_COLOR,
 } from "../constants/colors";
@@ -13,7 +14,7 @@ export function TrendsTable(props: { className?: string }) {
     <StyledWrapper className={props.className}>
       <div>
         AI-based trends table coming soon!{" "}
-        <Link onClick={() => navigate("/faq")}>Learn more!</Link>
+        <Link onClick={() => navigate("/faq")}>Learn more</Link>
       </div>
     </StyledWrapper>
   );
@@ -22,7 +23,7 @@ export function TrendsTable(props: { className?: string }) {
 const StyledWrapper = styled.div`
   background-color: ${MAIN_COMPONENT_COLOR};
   border-radius: 10px;
-  color: ${MAIN_TEXT_COLOR};
+  color: ${MAIN_COLOR};
   display: flex;
   justify-content: space-around;
   align-items: center;

@@ -23,6 +23,7 @@ import type { User } from "@prisma/client";
 import { useNavigate } from "react-router-dom";
 import { UserButton } from "./UserButton";
 import { UserContext } from "..";
+import logo from "../resources/logo.png";
 
 export default function Banner() {
   const [account, setAccount] = useState("");
@@ -131,13 +132,12 @@ export default function Banner() {
   return (
     <Wrapper>
       <TitleWrapper>
-        <Title
+        <Logo
+          src={logo}
           onClick={() => {
             navigate("/");
           }}
-        >
-          CHATSWAP
-        </Title>
+        />
         <StyledBadge>
           ALPHA <VersionText>v1.0</VersionText>
         </StyledBadge>
@@ -189,8 +189,9 @@ const StyledBadge = styled(Badge)`
 const VersionText = styled.span`
   font-size: 10px;
 `;
-const Title = styled.h2`
-  margin-top: 2%;
+const Logo = styled.img`
+  /* margin-top: 2%; */
+  width: 175px;
   &:hover {
     cursor: pointer;
   }

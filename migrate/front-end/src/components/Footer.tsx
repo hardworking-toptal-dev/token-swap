@@ -43,5 +43,3 @@ const FooterItem = styled.a`
     cursor: pointer;
   }
 `;
-
-const Test = styled.div``;

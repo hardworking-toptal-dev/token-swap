@@ -5,6 +5,7 @@ import {
   MAIN_COLOR,
   MAIN_COMPONENT_COLOR,
   MAIN_TEXT_COLOR,
+  SECONDARY_INPUT_COLOR,
 } from "../constants/colors";
 import { Button, Form, InputGroup } from "react-bootstrap";
 import MainButton from "./MainButton";
@@ -201,6 +202,8 @@ function TransactionChat(props: {
 
 const Wrapper = styled.div`
   height: 100%;
+  max-width: 25%;
+  min-width: 25%;
   max-height: 93vh;
   margin-top: 10px;
   background-color: ${MAIN_COMPONENT_COLOR};
@@ -280,9 +283,9 @@ const EmojiWrapper = styled.div`
     --epr-skin-tone-picker-menu-color: ${MAIN_TEXT_COLOR};
     --epr-emoji-size: 25px;
     --epr-category-label-height: 20px;
-    --epr-bg-color: ${INPUT_COLOR};
+    --epr-bg-color: ${SECONDARY_INPUT_COLOR};
     --epr-picker-border-color: transparent;
-    --epr-category-label-bg-color: ${INPUT_COLOR};
-    --epr-text-color: ${MAIN_TEXT_COLOR};
+    --epr-category-label-bg-color: ${SECONDARY_INPUT_COLOR};
+    --epr-text-color: ${MAIN_COLOR};
   }
 `;
