@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
     await prisma.user.delete({
       where: {
         address: "transaction_client",
-        signature: TRANSACTION_CLIENT_SIGNATURE,
+        administrative: true,
       },
     });
   } catch (e) {
