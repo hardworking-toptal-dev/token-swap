@@ -1,7 +1,7 @@
 export const FAQs = [
   {
     Heading: "What is Chatswap?",
-    Body: 'Chatswap is a decentralized exchange running atop the 0x liqudity protocal, which it uses to allow users to swap tokens. In addition to providing access to AMM (Automated Market Making), Chatswap also allows for users to speak directly to one another in a global chat and gives information about what other users are doing on the platform in real time. This includes things such as broadcasting when a user makes a trade, which is currently the only feature implemented for "social analysis".',
+    Body: "Chatswap is a decentralized exchange running atop the 0x liqudity protocol, which it uses to allow users to swap tokens. In addition to providing access to AMM (Automated Market Making), Chatswap also allows for users to speak directly to one another in a global chat and gives information about what other users are doing on the platform in real time. This includes things such as broadcasting when a user makes a trade, which is currently the only feature implemented for social analysis.",
   },
   {
     Heading: "What is the goal of Chatswap?",

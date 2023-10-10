@@ -1,7 +1,13 @@
 import styled from "styled-components";
-import { INPUT_COLOR, MAIN_COLOR } from "../constants/colors";
+import { INPUT_COLOR } from "../constants/colors";
 import { useNavigate } from "react-router-dom";
 import { CONTACT_EMAIL } from "../constants/contact_email";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCircleQuestion,
+  faEnvelope,
+  faHouse,
+} from "@fortawesome/free-solid-svg-icons";
 
 export function Footer(props: { className?: string }) {
   const navigate = useNavigate();
@@ -9,9 +15,15 @@ export function Footer(props: { className?: string }) {
   return (
     <FooterWrapper className={props.className}>
       <ItemsWrapper>
-        <FooterItem onClick={() => navigate("/")}>Home</FooterItem>
-        <FooterItem onClick={() => navigate("/faq")}>FAQ</FooterItem>
-        <FooterItem href={`mailto:${CONTACT_EMAIL}`}>Contact</FooterItem>
+        <FooterItem onClick={() => navigate("/")}>
+          <FontAwesomeIcon icon={faHouse} /> Home
+        </FooterItem>
+        <FooterItem onClick={() => navigate("/faq")}>
+          <FontAwesomeIcon icon={faCircleQuestion} /> FAQ
+        </FooterItem>
+        <FooterItem href={`mailto:${CONTACT_EMAIL}`}>
+          <FontAwesomeIcon icon={faEnvelope} /> Contact
+        </FooterItem>
       </ItemsWrapper>
     </FooterWrapper>
   );

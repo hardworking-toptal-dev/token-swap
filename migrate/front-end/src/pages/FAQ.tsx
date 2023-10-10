@@ -1,7 +1,6 @@
 import { Accordion } from "react-bootstrap";
 import styled from "styled-components";
 import {
-  INPUT_COLOR,
   MAIN_COLOR_ON_HOVER,
   MAIN_COMPONENT_COLOR,
   SECONDARY_INPUT_COLOR,

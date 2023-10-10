@@ -162,7 +162,6 @@ export default function TradingBox(props: {
           buyTokenAddress={buyToken.address}
           buyAmount={buyTokenAmount ? buyTokenAmount : buyTokenPrice}
           sellTokenAddress={sellToken.address}
-          // sellAmount={sellTokenAmount ? sellTokenAmount : sellTokenPrice}
           buyDecimals={buyToken.decimals}
         />
       </SwapWrapper>
@@ -173,7 +172,6 @@ export default function TradingBox(props: {
 function SwapButton(props: {
   buyTokenAddress: string;
   sellTokenAddress: string;
-  // sellAmount: number;
   buyDecimals: number;
   buyAmount: number;
 }) {

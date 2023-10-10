@@ -63,8 +63,6 @@ export default function Banner() {
         } else {
           setLoginButtonHidden(true);
           setLoginFormHidden(true);
-          // setLoginText(user.username);
-          // setWalletIcon(<></>);
           setUser(user);
           setUserButtonHidden(false);
         }
@@ -80,8 +78,6 @@ export default function Banner() {
     const user: User = await fetch(
       `http://localhost:4500/users/${account}/${signature}`
     ).then((result) => result.json());
-    // setLoginText(user.username);
-    // setWalletIcon(<></>);
     setLoginButtonHidden(true);
     setLoginFormHidden(true);
     setUser(user);
@@ -116,9 +112,6 @@ export default function Banner() {
         if (user) {
           setLoginButtonHidden(true);
           setLoginFormHidden(true);
-          // setLoginText(user.username);
-          // setWalletIcon(<></>);
-          setUser(user);
           setUser(user);
           setUserButtonHidden(false);
         } else {
@@ -127,6 +120,7 @@ export default function Banner() {
         }
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, signature]);
 
   return (

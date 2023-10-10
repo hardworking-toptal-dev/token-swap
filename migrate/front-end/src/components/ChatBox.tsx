@@ -87,12 +87,14 @@ export default function ChatBox(props: { className?: string }) {
 
       setSocket(connectSocket);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, walletConnected, socketConnected]);
 
   useEffect(() => {
     setChats({
       array: [latestChat, ...chats.array],
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [latestChat]);
 
   function sendMessage(input: string) {
@@ -288,4 +290,6 @@ const EmojiWrapper = styled.div`
     --epr-category-label-bg-color: ${SECONDARY_INPUT_COLOR};
     --epr-text-color: ${MAIN_COLOR};
   }
+
+  z-index: 998;
 `;
