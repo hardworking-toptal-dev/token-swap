@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { TOKEN_LIST_URL } from "../../constants/API.js";
-import { ETH_ADDRESS } from "../../constants/ABI.js";
+import { TOKEN_LIST_URL } from "../constants/API.js";
+import { ETH_ADDRESS } from "../constants/ABI.js";
 
 const ethereumToken = {
   address: ETH_ADDRESS,

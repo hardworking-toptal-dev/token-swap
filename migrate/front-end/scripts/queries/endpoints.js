@@ -2,8 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import express from "express";
 import io from "socket.io-client";
 import { getTransaction } from "../web3/backend_web3.js";
-import { TRANSACTION_CLIENT_SIGNATURE } from "../../constants/sensitive.js";
-import { RESTRICTED_USERNAMES } from "../../constants/restricted_usernames.js";
+import { TRANSACTION_CLIENT_SIGNATURE } from "../constants/sensitive.js";
+import { RESTRICTED_USERNAMES } from "../constants/restricted_usernames.js";
 
 const port = 4500;
 const api = express();

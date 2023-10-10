@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { TRANSACTION_CLIENT_SIGNATURE } from "../../constants/sensitive.js";
+import { TRANSACTION_CLIENT_SIGNATURE } from "../constants/sensitive.js";
 
 const prisma = new PrismaClient();
 
