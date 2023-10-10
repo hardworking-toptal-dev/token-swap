@@ -41,8 +41,8 @@ export default function Banner() {
   async function login() {
     setClickedLoginFlag(true);
     const addresses = (await getAccount()) as string[];
-    setAccount(addresses[0]);
-    if (await isConnected())
+    if (await isConnected()) {
+      setAccount(addresses[0]);
       if (!getCookie("signature")) {
         try {
           setSignature(await getSignature(account));
@@ -67,6 +67,7 @@ export default function Banner() {
           setUserButtonHidden(false);
         }
       }
+    }
   }
   async function createUser() {
     console.log(

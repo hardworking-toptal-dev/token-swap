@@ -14,7 +14,7 @@ const ethereumToken = {
 
 const prisma = new PrismaClient();
 
-setInterval(async () => {
+async function populateTokens() {
   try {
     const startTime = new Date();
     console.log(
@@ -37,7 +37,10 @@ setInterval(async () => {
     tokens.forEach(async (token) => {
       await prisma.token.create({
         data: {
-          address: token.address.toLowerCase(),
+          address:
+            token.address !== ETH_ADDRESS
+              ? token.address.toLowerCase()
+              : token.address,
           chainId: token.chainId,
           decimals: token.decimals,
           logoURI: token.logoURI,
@@ -58,4 +61,7 @@ setInterval(async () => {
   } catch (e) {
     console.log(e);
   }
-}, 43200000); //Every 12 hours.
+}
+
+populateTokens();
+setInterval(populateTokens, 43200000); //Every 12 hours.
