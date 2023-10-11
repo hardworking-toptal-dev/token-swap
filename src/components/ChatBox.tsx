@@ -24,6 +24,7 @@ import { isConnected } from "../scripts/web3/frontend_web3";
 import EmojiPicker from "emoji-picker-react";
 import Overlay from "react-bootstrap/Overlay";
 import { UserContext } from "..";
+import { IP_ADDRESS } from "../constants/ip_address";
 
 export default function ChatBox(props: { className?: string }) {
   const [input, setInput] = useState("");
@@ -41,7 +42,7 @@ export default function ChatBox(props: { className?: string }) {
   useEffect(() => {
     (async () => {
       setWalletConnected((await isConnected()) ? true : false);
-      const connectSocket = io("http://localhost:4000");
+      const connectSocket = io(`http://${IP_ADDRESS}:4000`);
       console.log("Connecting to the server...");
       connectSocket.on("connect", () => {
         console.log("connected");

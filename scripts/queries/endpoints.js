@@ -5,11 +5,12 @@ import { getTransaction } from "../web3/backend_web3.js";
 import { TRANSACTION_CLIENT_SIGNATURE } from "../constants/sensitive.js";
 import { RESTRICTED_USERNAMES } from "../constants/restricted_usernames.js";
 import { ETH_ADDRESS } from "../constants/ABI.js";
+import { IP_ADDRESS } from "../constants/ip_address.js";
 
 const port = 4500;
 const api = express();
 const prisma = new PrismaClient();
-const socket = io("http://localhost:4000");
+const socket = io(`http://${IP_ADDRESS}:4000`);
 
 //configuration
 api.use(express.json());

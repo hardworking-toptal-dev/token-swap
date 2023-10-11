@@ -3,6 +3,7 @@ import Web3 from "web3";
 import { ERC20ABI } from "../../constants/ABI";
 import { signature_message } from "../../constants/signature_message";
 import { ZEROX_API_KEY } from "../../constants/sensitive";
+import { IP_ADDRESS } from "../../constants/ip_address";
 
 export enum TokenTypes {
   buy = "buy",
@@ -129,7 +130,7 @@ export async function swap(
   const signature = await getSignature(((await getAccount()) as string[])[0]);
   try {
     fetch(
-      `http://localhost:4500/sendTransaction/${signature}/${receipt.transactionHash}`,
+      `http://${IP_ADDRESS}:4500/sendTransaction/${signature}/${receipt.transactionHash}`,
       { method: "POST" }
     );
   } catch (e) {
