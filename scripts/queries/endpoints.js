@@ -4,6 +4,7 @@ import io from "socket.io-client";
 import { getTransaction } from "../web3/backend_web3.js";
 import { TRANSACTION_CLIENT_SIGNATURE } from "../constants/sensitive.js";
 import { RESTRICTED_USERNAMES } from "../constants/restricted_usernames.js";
+import { ETH_ADDRESS } from "../constants/ABI.js";
 
 const port = 4500;
 const api = express();
@@ -51,10 +52,20 @@ api.post("/sendTransaction/:signature/:transactionId/", async (req, res) => {
       where: { address: transaction.address, signature: signature },
     });
     const sellToken = await prisma.token.findUnique({
-      where: { address: transaction.tokenAddresses[0].toLowerCase() },
+      where: {
+        address:
+          transaction.tokenAddresses[0] !== ETH_ADDRESS
+            ? transaction.tokenAddresses[0].toLowerCase()
+            : transaction.tokenAddresses[0],
+      },
     });
     const buyToken = await prisma.token.findUnique({
-      where: { address: transaction.tokenAddresses[1].toLowerCase() },
+      where: {
+        address:
+          transaction.tokenAddresses[1] !== ETH_ADDRESS
+            ? transaction.tokenAddresses[1].toLowerCase()
+            : transaction.tokenAddresses[1],
+      },
     });
     const isRecent = Date.now() - transaction.blocktime <= 600000; //Transaction has to be within 10 minutes
 
