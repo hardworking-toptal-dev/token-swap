@@ -1,1 +1,2 @@
-export const IP_ADDRESS = "localhost";
+export const ENDPOINTS_ADDRESS = "localhost:4500/api";
+export const CHAT_SERVER_ADDRESS = "localhost:4000";

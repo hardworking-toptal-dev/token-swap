@@ -3,7 +3,7 @@ import Web3 from "web3";
 import { ERC20ABI } from "../../constants/ABI";
 import { signature_message } from "../../constants/signature_message";
 import { ZEROX_API_KEY } from "../../constants/sensitive";
-import { IP_ADDRESS } from "../../constants/ip_address";
+import { ENDPOINTS_ADDRESS } from "../../constants/ip_address";
 
 export enum TokenTypes {
   buy = "buy",
@@ -55,10 +55,12 @@ export async function getPrice(
   amount: number
 ) {
   if (buyToken && sellToken) {
-    const url = "https://api.0x.org/swap/v1/price/";
+    const url = "https://api.0x.org/swap/v1/price";
     const params =
       "buyToken=" + buyToken + "&sellToken=" + sellToken + "&" + buyOrSell;
     const headers = { "0x-api-key": ZEROX_API_KEY };
+
+    console.log(headers);
 
     if (buyOrSell === TokenTypes.sell) {
       return fetch(
@@ -107,7 +109,7 @@ export async function swap(
   buyAmount: number,
   buyDecimals: number
 ) {
-  const url = "https://api.0x.org/swap/v1/quote/";
+  const url = "https://api.0x.org/swap/v1/quote";
   const params =
     "buyToken=" +
     sellToken +
@@ -130,7 +132,7 @@ export async function swap(
   const signature = await getSignature(((await getAccount()) as string[])[0]);
   try {
     fetch(
-      `http://${IP_ADDRESS}:4500/sendTransaction/${signature}/${receipt.transactionHash}`,
+      `http://${ENDPOINTS_ADDRESS}/sendTransaction/${signature}/${receipt.transactionHash}`,
       { method: "POST" }
     );
   } catch (e) {

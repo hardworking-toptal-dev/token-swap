@@ -22,7 +22,7 @@ import {
 import MainButton from "./MainButton";
 import { BaseSyntheticEvent, useContext, useState } from "react";
 import { UserContext } from "..";
-import { IP_ADDRESS } from "../constants/ip_address";
+import { ENDPOINTS_ADDRESS } from "../constants/ip_address";
 
 export function UserButton(props: { hidden: boolean }) {
   const { user, setUser } = useContext(UserContext);
@@ -33,7 +33,7 @@ export function UserButton(props: { hidden: boolean }) {
   async function requestNewUsername() {
     if (newUsernameValue) {
       const newUser = await fetch(
-        `http://${IP_ADDRESS}:4500/changeUsername/${user.address}/${user.signature}/${newUsernameValue}`,
+        `http://${ENDPOINTS_ADDRESS}/changeUsername/${user.address}/${user.signature}/${newUsernameValue}`,
         {
           method: "POST",
         }

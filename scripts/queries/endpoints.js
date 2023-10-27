@@ -5,14 +5,16 @@ import { getTransaction } from "../web3/backend_web3.js";
 import { TRANSACTION_CLIENT_SIGNATURE } from "../constants/sensitive.js";
 import { RESTRICTED_USERNAMES } from "../constants/restricted_usernames.js";
 import { ETH_ADDRESS } from "../constants/ABI.js";
-import { IP_ADDRESS } from "../constants/ip_address.js";
+import { CHAT_SERVER_ADDRESS } from "../constants/ip_address.js";
 
 const port = 4500;
 const api = express();
+const router = express();
 const prisma = new PrismaClient();
-const socket = io(`http://${IP_ADDRESS}:4000`);
+const socket = io(`http://${CHAT_SERVER_ADDRESS}`);
 
 //configuration
+
 api.use(express.json());
 
 api.use((req, res, next) => {
@@ -24,8 +26,10 @@ api.use((req, res, next) => {
   next();
 });
 
+api.use("/api", router);
+
 //endpoints
-api.get("/users/:address/:signature", async (req, res) => {
+router.get("/users/:address/:signature", async (req, res) => {
   const { address, signature } = req.params;
   const users = await prisma.user.findUnique({
     where: { address: address, signature: signature },
@@ -33,7 +37,7 @@ api.get("/users/:address/:signature", async (req, res) => {
   res.json(users);
 });
 
-api.post("/createUser/:address/:username/:signature", async (req, res) => {
+router.post("/createUser/:address/:username/:signature", async (req, res) => {
   //Need to implement check that uses getAddressFromSignature to ensure that both the address and the string are real address and string values to prevent spamming of post requests by malicious users
   const { address, username, signature } = req.params;
 
@@ -43,7 +47,7 @@ api.post("/createUser/:address/:username/:signature", async (req, res) => {
   res.json(response);
 });
 
-api.post("/sendTransaction/:signature/:transactionId/", async (req, res) => {
+router.post("/sendTransaction/:signature/:transactionId/", async (req, res) => {
   const { signature, transactionId } = req.params;
 
   const transaction = await getTransaction(transactionId);
@@ -95,12 +99,12 @@ api.post("/sendTransaction/:signature/:transactionId/", async (req, res) => {
   }
 });
 
-api.get("/tokens", async (req, res) => {
+router.get("/tokens", async (req, res) => {
   const tokens = await prisma.token.findMany({});
   res.json(tokens);
 });
 
-api.post(
+router.post(
   "/changeUsername/:address/:signature/:newUsername",
   async (req, res) => {
     const { address, signature, newUsername } = req.params;

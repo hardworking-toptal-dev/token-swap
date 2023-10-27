@@ -20,7 +20,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGasPump, faRightLeft } from "@fortawesome/free-solid-svg-icons";
 import { ETH_ADDRESS } from "../constants/ABI";
-import { IP_ADDRESS } from "../constants/ip_address";
+import { ENDPOINTS_ADDRESS } from "../constants/ip_address";
 
 export default function TradingBox(props: {
   className?: string;
@@ -58,7 +58,7 @@ export default function TradingBox(props: {
 
   useEffect(() => {
     (async () => {
-      const tokens = await fetch(`http://${IP_ADDRESS}:4500/tokens`).then(
+      const tokens = await fetch(`http://${ENDPOINTS_ADDRESS}/tokens`).then(
         (data) => data.json()
       );
       setTokens(tokens);
