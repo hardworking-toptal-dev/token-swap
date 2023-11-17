@@ -3,7 +3,7 @@ import { RateLimiterMemory } from "rate-limiter-flexible";
 import { Server } from "socket.io";
 
 const port = 4000;
-const io = new Server(4000, {
+const io = new Server(port, {
   cors: {
     origin: "*",
   },

@@ -49,9 +49,15 @@ async function populateTokens() {
         },
       });
     });
-    await prisma.token.delete({
-      where: { address: "0x0000000000000000000000000000000000000000" },
-    });
+    try {
+      await prisma.token.delete({
+        where: { address: "0x0000000000000000000000000000000000000000" },
+      });
+    } catch (e) {
+      console.log(
+        "\nThere was no need for this deletion but it's fine, proceeding"
+      );
+    }
 
     const endTime = new Date();
     console.log(
