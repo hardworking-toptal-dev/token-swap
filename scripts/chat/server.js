@@ -21,6 +21,7 @@ const io = new Server(server, {
   path: "/chat/",
   cors: {
     origin: "*",
+    credentials: true,
   },
 });
 const prisma = new PrismaClient();
