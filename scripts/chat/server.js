@@ -1,16 +1,19 @@
 import { PrismaClient } from "@prisma/client";
 import { RateLimiterMemory } from "rate-limiter-flexible";
 import { Server } from "socket.io";
+import { createServer } from "http";
+import express from "express";
 
+const expressApp = express();
+const server = createServer(expressApp);
 const port = 4000;
-const io = new Server(port, {
+const io = new Server(server, {
   cors: {
     origin: "*",
+    methods: ["GET", "POST"],
   },
 });
 const prisma = new PrismaClient();
-
-console.log("Server is listening on port: %d", port);
 
 const rateLimiter = new RateLimiterMemory({
   points: 5, // 5 points
@@ -60,3 +63,7 @@ io.of("/").on("connect", (socket) => {
     }
   });
 });
+
+server.listen(port, () =>
+  console.log(`Chat server listening on port: ${port}`)
+);
