@@ -67,7 +67,7 @@ export default function ChatBox(props: { className?: string }) {
         if (data.sender !== "transaction_client")
           setLatestChat(
             <IndividualChat
-              key={Math.random()}
+              key={data.key}
               username={data.sender}
               address={data.address}
               msg={data.msg}
@@ -94,9 +94,11 @@ export default function ChatBox(props: { className?: string }) {
   }, [user, walletConnected, socketConnected]);
 
   useEffect(() => {
-    setChats({
-      array: [latestChat, ...chats.array],
-    });
+    const lastChats = chats.array.slice(0, 5);
+    if (!lastChats.find((chat) => chat.key === latestChat.key))
+      setChats({
+        array: [latestChat, ...chats.array],
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [latestChat]);
 

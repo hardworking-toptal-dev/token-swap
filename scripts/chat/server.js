@@ -68,6 +68,7 @@ io.of("/").on("connect", (socket) => {
           address: transactionClientUser.address,
           action: data.action,
           msg: data.msg,
+          key: Math.random(),
         });
     } catch (e) {
       console.log(e);
