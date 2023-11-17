@@ -5,9 +5,20 @@ import { createServer } from "http";
 import express from "express";
 
 const expressApp = express();
+
+expressApp.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
 const server = createServer(expressApp);
 const port = 4000;
 const io = new Server(server, {
+  path: "/chat/",
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
