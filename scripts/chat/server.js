@@ -20,8 +20,7 @@ const port = 4000;
 const io = new Server(server, {
   path: "/chat/",
   cors: {
-    origin: "*",
-    credentials: true,
+    origin: "http://www.chatswap.ai",
   },
 });
 const prisma = new PrismaClient();
