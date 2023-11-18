@@ -44,6 +44,7 @@ export default function ChatBox(props: { className?: string }) {
       setWalletConnected((await isConnected()) ? true : false);
       const connectSocket = io(`${CHAT_SERVER_ADDRESS}`, {
         path: "/chat",
+        transports: ["websocket", "polling"],
       });
       console.log("Connecting to the server...");
       connectSocket.on("connect", () => {
