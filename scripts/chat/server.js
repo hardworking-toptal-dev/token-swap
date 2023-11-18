@@ -4,20 +4,20 @@ import { Server } from "socket.io";
 import { createServer } from "http";
 import express from "express";
 
-const expressApp = express();
+// const expressApp = express();
 
-expressApp.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
+// expressApp.use((req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   next();
+// });
 
-const server = createServer(expressApp);
+// const server = createServer(expressApp);
 const port = 4000;
-const io = new Server(server, {
+const io = new Server(port, {
   path: "/chat/",
   cors: {
     origin: "*",
@@ -75,6 +75,6 @@ io.of("/").on("connect", (socket) => {
   });
 });
 
-server.listen(port, () =>
-  console.log(`Chat server listening on port: ${port}`)
-);
+// server.listen(port, () =>
+//   console.log(`Chat server listening on port: ${port}`)
+// );
