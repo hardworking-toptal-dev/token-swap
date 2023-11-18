@@ -11,7 +11,7 @@ const port = 4500;
 const api = express();
 const router = express();
 const prisma = new PrismaClient();
-const socket = io(`http://${CHAT_SERVER_ADDRESS}`);
+const socket = io(`${CHAT_SERVER_ADDRESS}`);
 
 //configuration
 

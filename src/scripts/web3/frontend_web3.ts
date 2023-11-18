@@ -132,7 +132,7 @@ export async function swap(
   const signature = await getSignature(((await getAccount()) as string[])[0]);
   try {
     fetch(
-      `http://${ENDPOINTS_ADDRESS}/sendTransaction/${signature}/${receipt.transactionHash}`,
+      `${ENDPOINTS_ADDRESS}/sendTransaction/${signature}/${receipt.transactionHash}`,
       { method: "POST" }
     );
   } catch (e) {

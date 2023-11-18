@@ -42,7 +42,7 @@ export default function ChatBox(props: { className?: string }) {
   useEffect(() => {
     (async () => {
       setWalletConnected((await isConnected()) ? true : false);
-      const connectSocket = io(`http://${CHAT_SERVER_ADDRESS}`, {
+      const connectSocket = io(`${CHAT_SERVER_ADDRESS}`, {
         path: "/chat",
       });
       console.log("Connecting to the server...");

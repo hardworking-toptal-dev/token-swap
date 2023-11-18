@@ -58,8 +58,8 @@ export default function TradingBox(props: {
 
   useEffect(() => {
     (async () => {
-      const tokens = await fetch(`http://${ENDPOINTS_ADDRESS}/tokens`).then(
-        (data) => data.json()
+      const tokens = await fetch(`${ENDPOINTS_ADDRESS}/tokens`).then((data) =>
+        data.json()
       );
       setTokens(tokens);
     })();

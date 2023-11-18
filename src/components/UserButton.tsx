@@ -33,7 +33,7 @@ export function UserButton(props: { hidden: boolean }) {
   async function requestNewUsername() {
     if (newUsernameValue) {
       const newUser = await fetch(
-        `http://${ENDPOINTS_ADDRESS}/changeUsername/${user.address}/${user.signature}/${newUsernameValue}`,
+        `${ENDPOINTS_ADDRESS}/changeUsername/${user.address}/${user.signature}/${newUsernameValue}`,
         {
           method: "POST",
         }

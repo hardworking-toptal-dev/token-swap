@@ -6,7 +6,7 @@ import { createInterface } from "readline";
 import prompt from "prompt-sync";
 import { IP_ADDRESS } from "../constants/ip_address";
 
-const socket = io(`http://${IP_ADDRESS}:4000`);
+const socket = io(`${IP_ADDRESS}:4000`);
 const input = prompt({ sigint: true });
 const nickname = input("Username: ");
 

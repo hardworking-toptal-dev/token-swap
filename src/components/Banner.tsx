@@ -53,7 +53,7 @@ export default function Banner() {
       } else {
         setSignature(await getSignature(account));
         const user = await fetch(
-          `http://${ENDPOINTS_ADDRESS}/users/${account}/${signature}`
+          `${ENDPOINTS_ADDRESS}/users/${account}/${signature}`
         ).then((result) => result.json());
 
         if (!user) {
@@ -73,12 +73,12 @@ export default function Banner() {
   async function createUser() {
     console.log(
       await fetch(
-        `http://${ENDPOINTS_ADDRESS}/createUser/${account}/${usernameInput}/${signature}`,
+        `${ENDPOINTS_ADDRESS}/createUser/${account}/${usernameInput}/${signature}`,
         { method: "POST" }
       )
     );
     const user: User = await fetch(
-      `http://${ENDPOINTS_ADDRESS}/users/${account}/${signature}`
+      `${ENDPOINTS_ADDRESS}/users/${account}/${signature}`
     ).then((result) => result.json());
     setLoginButtonHidden(true);
     setLoginFormHidden(true);
@@ -100,7 +100,7 @@ export default function Banner() {
         } else {
           setSignature(await getSignature(account));
           const user = await fetch(
-            `http://${ENDPOINTS_ADDRESS}/users/${account}/${signature}`
+            `${ENDPOINTS_ADDRESS}/users/${account}/${signature}`
           ).then((result) => result.json());
           if (!user) {
             if (!clickedLoginFlag || forcedSignature) return;
@@ -108,7 +108,7 @@ export default function Banner() {
           }
         }
         const user = await fetch(
-          `http://${ENDPOINTS_ADDRESS}/users/${account}/${signature}`
+          `${ENDPOINTS_ADDRESS}/users/${account}/${signature}`
         ).then((result) => result.json());
 
         if (user) {
