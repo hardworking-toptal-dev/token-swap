@@ -11,7 +11,10 @@ const port = 4500;
 const api = express();
 const router = express();
 const prisma = new PrismaClient();
-const socket = io(`${CHAT_SERVER_ADDRESS}`);
+const socket = io(`${CHAT_SERVER_ADDRESS}`, {
+  path: "/chat",
+  transports: ["websocket", "polling"],
+});
 
 //configuration
 
@@ -48,54 +51,57 @@ router.post("/createUser/:address/:username/:signature", async (req, res) => {
 });
 
 router.post("/sendTransaction/:signature/:transactionId/", async (req, res) => {
-  const { signature, transactionId } = req.params;
+  try {
+    const { signature, transactionId } = req.params;
 
-  const transaction = await getTransaction(transactionId);
-  console.log(transaction);
-  if (transaction) {
-    const user = await prisma.user.findUnique({
-      where: { address: transaction.address, signature: signature },
-    });
-    const sellToken = await prisma.token.findUnique({
-      where: {
-        address:
-          transaction.tokenAddresses[0] !== ETH_ADDRESS
-            ? transaction.tokenAddresses[0].toLowerCase()
-            : transaction.tokenAddresses[0],
-      },
-    });
-    const buyToken = await prisma.token.findUnique({
-      where: {
-        address:
-          transaction.tokenAddresses[1] !== ETH_ADDRESS
-            ? transaction.tokenAddresses[1].toLowerCase()
-            : transaction.tokenAddresses[1],
-      },
-    });
-    const isRecent = Date.now() - transaction.blocktime <= 600000; //Transaction has to be within 10 minutes
-
-    if (user && isRecent) {
-      socket.emit("data", {
-        sender: "transaction_client",
-        address: "transaction_client",
-        signature: TRANSACTION_CLIENT_SIGNATURE,
+    const transaction = await getTransaction(transactionId);
+    if (transaction) {
+      const user = await prisma.user.findUnique({
+        where: { address: transaction.address, signature: signature },
       });
-      socket.emit("broadcast", {
-        sender: "transaction_client",
-        address: "transaction_client",
-        signature: TRANSACTION_CLIENT_SIGNATURE,
-        msg: {
-          ...transaction,
-          sellToken: sellToken.symbol
-            ? sellToken.symbol
-            : transaction.tokenAddresses[0].toLowerCase(),
-          buyToken: buyToken.symbol
-            ? buyToken.symbol
-            : transaction.tokenAddresses[1].toLowerCase(),
-          username: user.username,
+      const sellToken = await prisma.token.findUnique({
+        where: {
+          address:
+            transaction.tokenAddresses[0] !== ETH_ADDRESS
+              ? transaction.tokenAddresses[0].toLowerCase()
+              : transaction.tokenAddresses[0],
         },
       });
+      const buyToken = await prisma.token.findUnique({
+        where: {
+          address:
+            transaction.tokenAddresses[1] !== ETH_ADDRESS
+              ? transaction.tokenAddresses[1].toLowerCase()
+              : transaction.tokenAddresses[1],
+        },
+      });
+      const isRecent = Date.now() - transaction.blocktime <= 600000; //Transaction has to be within 10 minutes
+
+      if (user && isRecent) {
+        socket.emit("data", {
+          sender: "transaction_client",
+          address: "transaction_client",
+          signature: TRANSACTION_CLIENT_SIGNATURE,
+        });
+        socket.emit("broadcast", {
+          sender: "transaction_client",
+          address: "transaction_client",
+          signature: TRANSACTION_CLIENT_SIGNATURE,
+          msg: {
+            ...transaction,
+            sellToken: sellToken.symbol
+              ? sellToken.symbol
+              : transaction.tokenAddresses[0].toLowerCase(),
+            buyToken: buyToken.symbol
+              ? buyToken.symbol
+              : transaction.tokenAddresses[1].toLowerCase(),
+            username: user.username,
+          },
+        });
+      }
     }
+  } catch (e) {
+    console.log(e);
   }
 });
 
@@ -121,6 +127,21 @@ router.post(
     }
   }
 );
+
+router.get("/latestChats/:amount", async (req, res) => {
+  const amount = Number.parseInt(req.params.amount);
+  const chatRecords = await prisma.chat.findMany({
+    take: amount,
+    orderBy: { timestamp: "desc" },
+  });
+  const chats = await Promise.all(
+    chatRecords.map(async (chat) => {
+      const user = await prisma.user.findUnique({ where: { id: chat.userId } });
+      return { username: user.username, address: user.address, ...chat };
+    })
+  );
+  res.json(chats);
+});
 
 //server
 const server = api.listen(port, () => {

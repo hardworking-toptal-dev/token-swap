@@ -57,18 +57,40 @@ io.of("/").on("connect", (socket) => {
 
   socket.on("broadcast", async (data) => {
     try {
-      await rateLimiter.consume(socket.handshake.address); // consume 1 point per event from IP
-      const authenticated =
-        transactionClientUser.address === data.sender &&
-        transactionClientUser.signature === data.signature;
-      if (transactionClientUser && authenticated)
-        socket.broadcast.emit("broadcast", {
-          sender: transactionClientUser.username,
-          address: transactionClientUser.address,
-          action: data.action,
-          msg: data.msg,
-          key: Math.random(),
-        });
+      if (transactionClientUser) {
+        if (transactionClientUser.username !== "transaction_client")
+          await rateLimiter.consume(socket.handshake.address); // consume 1 point per event from IP
+        const authenticated =
+          transactionClientUser.address === data.sender &&
+          transactionClientUser.signature === data.signature;
+        if (authenticated) {
+          let chat =
+            transactionClientUser.username !== "transaction_client"
+              ? await prisma.chat.create({
+                  data: {
+                    userId: transactionClientUser.id,
+                    message: data.msg,
+                    trade: false,
+                  },
+                })
+              : await prisma.chat.create({
+                  data: {
+                    userId: transactionClientUser.id,
+                    message: JSON.stringify(data.msg),
+                    trade: true,
+                  },
+                }); //change from null to creating a transaction chat
+
+          socket.broadcast.emit("broadcast", {
+            sender: transactionClientUser.username,
+            address: transactionClientUser.address,
+            action: data.action,
+            msg: data.msg,
+            timestamp: chat.timestamp,
+            key: Math.random(),
+          });
+        }
+      }
     } catch (e) {
       console.log(e);
     }

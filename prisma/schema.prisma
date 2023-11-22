@@ -16,6 +16,7 @@ model User {
   address        String  @unique
   signature      String  @unique
   administrative Boolean @default(false)
+  Chat           Chat[]
 }
 
 model Token {
@@ -25,4 +26,13 @@ model Token {
   logoURI  String
   name     String
   symbol   String
+}
+
+model Chat {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  message   String
+  timestamp DateTime @default(now())
+  trade     Boolean
 }

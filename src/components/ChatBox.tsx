@@ -24,7 +24,10 @@ import { isConnected } from "../scripts/web3/frontend_web3";
 import EmojiPicker from "emoji-picker-react";
 import Overlay from "react-bootstrap/Overlay";
 import { UserContext } from "..";
-import { CHAT_SERVER_ADDRESS } from "../constants/ip_address";
+import {
+  CHAT_SERVER_ADDRESS,
+  ENDPOINTS_ADDRESS,
+} from "../constants/ip_address";
 
 export default function ChatBox(props: { className?: string }) {
   const [input, setInput] = useState("");
@@ -38,7 +41,6 @@ export default function ChatBox(props: { className?: string }) {
 
   const iconRef = useRef(null);
   const { user } = useContext(UserContext);
-
   useEffect(() => {
     (async () => {
       setWalletConnected((await isConnected()) ? true : false);
@@ -72,10 +74,10 @@ export default function ChatBox(props: { className?: string }) {
               username={data.sender}
               address={data.address}
               msg={data.msg}
+              timestamp={data.timestamp}
             />
           );
         else {
-          console.log(data.msg);
           setLatestChat(
             <TransactionChat
               user={data.msg.username}
@@ -83,14 +85,53 @@ export default function ChatBox(props: { className?: string }) {
               sellToken={data.msg.sellToken}
               buyToken={data.msg.buyToken}
               buyAmount={data.msg.buyTokenAmount}
+              timestamp={data.timestamp}
+              key={data.key}
             ></TransactionChat>
           );
         }
-        console.log(data.msg);
       });
 
       setSocket(connectSocket);
+
+      //Setting the previous chat messages
+      const previousChatsRecords: [any] = await fetch(
+        `${ENDPOINTS_ADDRESS}/latestChats/100`,
+        {
+          method: "GET",
+        }
+      ).then((result) => result.json());
+      const previousChats = previousChatsRecords.map((chat) => {
+        if (chat.address !== "transaction_client")
+          return (
+            <IndividualChat
+              username={chat.username}
+              address={chat.address}
+              msg={chat.message}
+              timestamp={chat.timestamp}
+              key={Math.random()}
+            ></IndividualChat>
+          );
+        else {
+          const params = JSON.parse(chat.message);
+          console.log(params);
+          return (
+            <TransactionChat
+              user={params.username}
+              address={params.address}
+              sellToken={params.sellToken}
+              buyToken={params.buyToken}
+              buyAmount={params.buyTokenAmount}
+              timestamp={chat.timestamp}
+              key={Math.random()}
+            ></TransactionChat>
+          );
+        }
+      });
+
+      setChats({ array: previousChats });
     })();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, walletConnected, socketConnected]);
 
@@ -170,7 +211,13 @@ function IndividualChat(props: {
   username: string;
   address: string;
   msg: string;
+  timestamp: string;
 }) {
+  const date = new Date(props.timestamp);
+  const dateString = `${date.toLocaleDateString("en-US", {
+    dateStyle: "short",
+  })} ${date.toLocaleTimeString("en-US", { timeStyle: "short" })}`;
+
   return (
     <div>
       <Message>
@@ -182,6 +229,7 @@ function IndividualChat(props: {
         </HighlightedUsername>{" "}
         {props.msg}
       </Message>
+      <ChatDate> {dateString}</ChatDate>
     </div>
   );
 }
@@ -192,19 +240,28 @@ function TransactionChat(props: {
   sellToken: string;
   buyToken: string;
   buyAmount: number;
+  timestamp: string;
 }) {
+  const date = new Date(props.timestamp);
+  const dateString = `${date.toLocaleDateString("en-US", {
+    dateStyle: "short",
+  })} ${date.toLocaleTimeString("en-US", { timeStyle: "short" })}`;
+
   return (
-    <TransactionMessage>
-      <HighlightedUsername
-        href={`https://etherscan.io/address/${props.address}`}
-        target="_blank"
-      >
-        {props.user}
-      </HighlightedUsername>{" "}
-      has bought <HighlightedChat>{props.buyAmount}</HighlightedChat> of{" "}
-      <HighlightedChat>{props.buyToken}</HighlightedChat> with{" "}
-      <HighlightedChat>{props.sellToken}</HighlightedChat>!
-    </TransactionMessage>
+    <div>
+      <TransactionMessage>
+        <HighlightedUsername
+          href={`https://etherscan.io/address/${props.address}`}
+          target="_blank"
+        >
+          {props.user}
+        </HighlightedUsername>{" "}
+        has bought <HighlightedChat>{props.buyAmount}</HighlightedChat> of{" "}
+        <HighlightedChat>{props.buyToken}</HighlightedChat> with{" "}
+        <HighlightedChat>{props.sellToken}</HighlightedChat>!
+      </TransactionMessage>
+      <ChatDate> {dateString}</ChatDate>
+    </div>
   );
 }
 
@@ -255,6 +312,12 @@ const HighlightedUsername = styled.a`
     text-decoration: underline;
     cursor: pointer;
   }
+`;
+
+const ChatDate = styled.span`
+  font-size: 11px;
+  font-style: italic;
+  color: ${MAIN_COLOR};
 `;
 
 const Message = styled.span`
