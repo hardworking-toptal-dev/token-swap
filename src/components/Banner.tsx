@@ -135,7 +135,7 @@ export default function Banner() {
           }}
         />
         <StyledBadge>
-          ALPHA <VersionText>v1.0</VersionText>
+          ALPHA <VersionText>v1.1</VersionText>
         </StyledBadge>
       </TitleWrapper>
       <LoginWrapper>

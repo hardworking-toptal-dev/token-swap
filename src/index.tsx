@@ -8,6 +8,7 @@ import { ErrorPage } from "./pages/Error";
 import { createContext, useState } from "react";
 import type { User } from "@prisma/client";
 import { PageTemplate } from "./pages/PageWrapper";
+import { Changelog } from "./pages/Changelog";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,15 @@ const router = createBrowserRouter([
     element: (
       <PageTemplate>
         <Faq />
+      </PageTemplate>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/changelog",
+    element: (
+      <PageTemplate>
+        <Changelog />
       </PageTemplate>
     ),
     errorElement: <ErrorPage />,

@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleQuestion,
   faEnvelope,
+  faFileCode,
   faHouse,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -20,6 +21,9 @@ export function Footer(props: { className?: string }) {
         </FooterItem>
         <FooterItem onClick={() => navigate("/faq")}>
           <FontAwesomeIcon icon={faCircleQuestion} /> FAQ
+        </FooterItem>
+        <FooterItem onClick={() => navigate("/changelog")}>
+          <FontAwesomeIcon icon={faFileCode} /> Changelog
         </FooterItem>
         <FooterItem href={`mailto:${CONTACT_EMAIL}`}>
           <FontAwesomeIcon icon={faEnvelope} /> Contact
